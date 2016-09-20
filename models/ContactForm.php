@@ -16,6 +16,21 @@ class ContactForm extends Model
     public $body;
     public $verifyCode;
 
+    // Scenarios for different users
+    const SCENARIO_EMAIL_FROM_GUEST = 'EMAIL_FROM_GUEST';
+    const SCENARIO_EMAIL_FROM_USER = 'EMAIL_FROM_USER';
+
+    /**
+    * Overriden
+    * @return array with the possible scenarios.
+    */
+    public function scenarios () {
+        return [
+            self::SCENARIO_EMAIL_FROM_GUEST => ['name', 'email', 'subject', 'body', 'verifyCode'],
+            self::SCENARIO_EMAIL_FROM_USER => ['subject', 'body', 'verifyCode'],
+        ];
+    }
+
 
     /**
      * @return array the validation rules.
@@ -38,7 +53,11 @@ class ContactForm extends Model
     public function attributeLabels()
     {
         return [
-            'verifyCode' => 'Verification Code',
+            'name' => 'The name of our respected customer',
+            'email' => 'The electronic address',
+            'subject' => 'The "too long; didn\'t read" field',
+            'body' => 'Whatever our respected customer has to say',
+            'verifyCode' => 'The security means to avoid robots',
         ];
     }
 

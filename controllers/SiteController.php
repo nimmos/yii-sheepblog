@@ -103,6 +103,10 @@ class SiteController extends Controller
     public function actionContact()
     {
         $model = new ContactForm();
+
+        // We introduce here a scenario for a GUEST user
+        $model->scenario = contactForm::SCENARIO_EMAIL_FROM_GUEST;
+
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
 
@@ -121,5 +125,32 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    //////////////////////////////////////////////////////
+    // EXAMPLE ACTIONS FOR PRACTISING
+    //////////////////////////////////////////////////////
+
+    /**
+    * Displays a message
+    */
+    public function actionSpeak ($message = "default message")
+    {
+        return $this->render("speak", ['message' => $message]);
+    }
+
+    /**
+    * Defines the ContactForm model, set attributes
+    * and display the model on the screen with var_dump.
+    */
+    public function actionShowContactModel () {
+        $mContactForm = new \app\models\ContactForm();
+        $mContactForm->name = "contactForm";
+        $mContactForm->email = "user@gmail.com";
+        $mContactForm->subject = "subject";
+        $mContactForm->body = "body";
+        var_dump($mContactForm->attributes);
+        // Next line converts the model to JSON format
+        // return \yii\helpers\Json::encode($mContactForm);
     }
 }

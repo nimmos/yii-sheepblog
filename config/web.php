@@ -47,6 +47,7 @@ $config = [
         ],
         */
     ],
+    'defaultRoute' => 'example',
     'params' => $params,
 ];
 
