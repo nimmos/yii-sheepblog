@@ -104,7 +104,7 @@ class SiteController extends Controller
     {
         $model = new ContactForm();
 
-        // We introduce here a scenario for a GUEST user
+        // Example: we introduce here a scenario for a GUEST user
         $model->scenario = contactForm::SCENARIO_EMAIL_FROM_GUEST;
 
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
@@ -124,10 +124,17 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        // Example: we pass some data to the view in the second parameter
+        $email = "example@domain.com";
+        $phone = "+666232323";
+        return $this->render('about', [
+            'email' => $email,
+            'phone' => $phone,
+            ]);
     }
 
     //////////////////////////////////////////////////////
+    // BEYOND THIS POINT:
     // EXAMPLE ACTIONS FOR PRACTISING
     //////////////////////////////////////////////////////
 
@@ -153,4 +160,47 @@ class SiteController extends Controller
         // Next line converts the model to JSON format
         // return \yii\helpers\Json::encode($mContactForm);
     }
+
+    /**
+    * Renders a test widget.
+    */
+    public function actionTestWidget () {
+        return $this->render('testwidget');
+    }
+
+    /**
+    * Displays a view with a registration form.
+    */
+    public function actionRegistration () {
+        $mRegistration = new \app\models\RegistrationForm();
+        return $this->render('registration', ['model' => $mRegistration]);
+    }
+
+    /**
+    * Displays another view with a registration form,
+    * this time for testing form validation
+    */
+    public function actionRegistrationValidate () {
+        $mRegistration = new \app\models\RegistrationFormValidate();
+        return $this->render('registration-validate', ['model' => $mRegistration]);
+    }
+
+    /**
+    * This validates data dynamically
+    */
+    public function actionAdHocValidation () {
+        $model = \yii\base\DynamicModel::validateData([
+            'username' => 'John',
+            'email' => 'jo@mail.com'
+        ], [
+            [['username', 'email'], 'string', 'max' => 12],
+            ['email', 'email'],
+        ]);
+    
+        if ($model->hasErrors()) {
+            var_dump($model->errors);
+        } else {
+            echo "success";
+        }
+    } 
 }
