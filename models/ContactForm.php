@@ -15,23 +15,7 @@ class ContactForm extends Model
     public $subject;
     public $body;
     public $verifyCode;
-
-    // Scenarios for different users
-    const SCENARIO_EMAIL_FROM_GUEST = 'EMAIL_FROM_GUEST';
-    const SCENARIO_EMAIL_FROM_USER = 'EMAIL_FROM_USER';
-
-    /**
-    * Overriden
-    * @return array with the possible scenarios.
-    */
-    public function scenarios () {
-        return [
-            self::SCENARIO_EMAIL_FROM_GUEST => ['name', 'email', 'subject', 'body', 'verifyCode'],
-            self::SCENARIO_EMAIL_FROM_USER => ['subject', 'body', 'verifyCode'],
-        ];
-    }
-
-
+    
     /**
      * @return array the validation rules.
      */

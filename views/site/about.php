@@ -16,26 +16,4 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <code><?= __FILE__ ?></code>
-
-    <!--///////////////////////////////////////////////////
-    // BEYOND THIS POINT:
-    // EXAMPLE TAGS
-    ////////////////////////////////////////////////////-->
-
-    <p>
-		<?= Html::encode("<script>alert('alert!');</script><h1>ENCODE EXAMPLE</h1>>") ?>
-	</p>
-	<p>
-		<?= HtmlPurifier::process("<script>alert('alert!');</script><h1> HtmlPurifier EXAMPLE</h1>") ?>
-	</p>
-	<?= $this->render("_part1") ?>
-	<?= $this->render("_part2") ?>
-
-	<p>
-		<b>Email:</b> <?= $email ?>
-	</p>
-	<p>
-		<b>Phone:</b> <?= $phone ?>
-	</p>
-
 </div>
