@@ -1,0 +1,1 @@
+mysqldump -u root -p blogdb > C:\wamp\www\yii-sheepblog\data\resource-sql\blogdbdump.sql

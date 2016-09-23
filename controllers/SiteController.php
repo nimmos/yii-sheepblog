@@ -11,7 +11,6 @@ use app\models\ContactForm;
 
 // Customized for the blog
 use app\models\PostForm;
-use app\models\CommentForm;
 use app\models\SignupForm;
 
 class SiteController extends Controller

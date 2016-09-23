@@ -27,7 +27,9 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Sheepblog',
+        'brandLabel' => 'Sheepblog'
+            // This is to test if we're browsing like a guest or a user
+            . (Yii::$app->user->isGuest ? '' : ': welcome!'),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
