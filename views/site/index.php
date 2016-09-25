@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Html;
 /* @var $this yii\web\View */
 
 $this->title = 'Sheepblog';
@@ -21,7 +22,7 @@ $this->title = 'Sheepblog';
 
                 <p>[[Post content]]</p>
 
-                <p><a class="btn btn-lg btn-default" href="http://localhost/yii-sheepblog/web/index.php?r=site/post">See post example</a></p>
+                <?= Html::a('See post example', ['/site/post', 'post_id' => 1], ['class' => 'btn btn-lg btn-default']) ?>
             </div>
         </div>
 

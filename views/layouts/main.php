@@ -27,9 +27,10 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Sheepblog'
+        'brandLabel' => 'Sheepblog: welcome'
             // This is to test if we're browsing like a guest or a user
-            . (Yii::$app->user->isGuest ? '' : ': welcome!'),
+            . (Yii::$app->user->isGuest ? '!' :
+            (' ' . Yii::$app->user->identity->username . '!')),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -45,6 +46,12 @@ AppAsset::register($this);
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
                 '<li>'
+                . Html::beginForm(['/site/post-compose'], 'post', ['class' => 'navbar-form'])
+                . Html::submitButton(
+                    'MAKE A POST',
+                    ['class' => 'btn btn-link']
+                )
+                . Html::endForm()
                 . Html::beginForm(['/site/logout'], 'post', ['class' => 'navbar-form'])
                 . Html::submitButton(
                     'Logout (' . Yii::$app->user->identity->username . ')',

@@ -32,4 +32,22 @@ class CommentForm extends Model
             'content' => 'Do you have something to say? Say it now!',
         ];
     }
+
+    /**
+     * Saves a new comment to the database.
+     * 
+     * @param type $user_id this is the author of the post
+     * @return boolean
+     */
+    public function publishComment($user_id, $post_id)
+    {
+        if($this->validate()) {
+            Yii::$app->db->createCommand()->insert('tbl_comment', [
+                'user_id' => $user_id,
+                'post_id' => $post_id,
+                'content' => $this->content,
+            ])->execute();
+        }
+        return true;
+    }
 }

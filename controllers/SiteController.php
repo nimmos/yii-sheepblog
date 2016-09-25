@@ -8,10 +8,12 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-
-// Customized for the blog
+// Models for the blog
+use app\models\TblPost;
+// Models for the blog forms
 use app\models\PostForm;
 use app\models\SignupForm;
+use app\models\CommentForm;
 
 class SiteController extends Controller
 {
@@ -76,6 +78,9 @@ class SiteController extends Controller
     {
         $model = new SignupForm();
 
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            return $this->refresh();
+        }        
         return $this->render('signup', ['model' => $model]);
     }
 
@@ -120,18 +125,32 @@ class SiteController extends Controller
     {
         $model = new PostForm();
 
+        if ($model->load(Yii::$app->request->post())
+                && $model->publishPost(Yii::$app->user->getId())) {
+            return $this->goBack();
+        }
         return $this->render('post-compose', ['model' => $model]);
     }
 
     /**
-     * Displays comment composing view.
-     * TODO: we have to embed this in the post page.
+     * Displays post view.
      *
      * @return string
      */
-    public function actionPost ()
+    public function actionPost ($post_id = 1)
     {
-        return $this->render('post');
+        $model = new CommentForm();
+        
+        if ($model->load(Yii::$app->request->post())
+                && $model->publishComment(
+                        Yii::$app->user->getId(),
+                        $post_id))
+        {
+            return $this->refresh();
+        }
+        return $this->render('post', [
+            'post' => TblPost::getPostById($post_id),
+        ]);
     }
 
     /**

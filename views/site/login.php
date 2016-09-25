@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1>Sign up...</h1>
 
     <p>If you aren't a user yet, please go sign up to our blog.</p>
-    <p><a class="btn btn-primary" href="http://localhost/yii-sheepblog/web/index.php?r=site%2Fsignup">Sign up</a></p>
+    <p><?= Html::a('Sign up', ['/site/signup'], ['class' => 'btn btn-primary']) ?></p>
 
     <h1>...or <?= Html::encode($this->title) ?></h1>
 
@@ -45,8 +45,4 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
     <?php ActiveForm::end(); ?>
-
-    <div class="col-lg-offset-1" style="color:#999;">
-        You may login with <strong>admin/admin</strong> or <strong>demo/demo</strong>.<br>
-    </div>
 </div>

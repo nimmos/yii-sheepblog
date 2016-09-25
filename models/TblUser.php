@@ -18,6 +18,7 @@ use Yii;
  */
 class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
+     
     /**
      * @inheritdoc
      */
@@ -34,7 +35,7 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return [
             [['user_id', 'email'], 'required'],
             [['user_id'], 'integer'],
-            [['username', 'password'], 'string', 'max' => 20],
+            [['username', 'password'], 'string', 'max' => 80],
             [['email'], 'string', 'max' => 40],
             [['authkey'], 'string', 'max' => 50],
             [['username'], 'unique'],
@@ -115,13 +116,27 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     }
 
     /**
-    * This will validate a password
-    */
+     * Validates a password.
+     * 
+     * @param type $password
+     * @return type
+     */
     public function validatePassword ($password)
     {
-        return $this->password === $password;
+        return Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    /**
+     * Encrypts a password generating a hash string.
+     * 
+     * @param type $password
+     */
+    public function setPassword ($password)
+    {
+        $this->$password = Yii::$app->security->generatePasswordHash($password);
     }
     
-    // TODO: consider creating a method that
-    // returns the name of the user based on the $id
+    public static function getUsernameById ($user_id) {
+        return self::findOne($user_id)->username;
+    }
 }

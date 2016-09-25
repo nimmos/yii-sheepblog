@@ -37,4 +37,22 @@ class PostForm extends Model
             'content' => 'Post content',
         ];
     }
+    
+    /**
+     * Saves a new post to the database.
+     * 
+     * @param type $user_id this is the author of the post
+     * @return boolean
+     */
+    public function publishPost($user_id)
+    {
+        if($this->validate()) {
+            Yii::$app->db->createCommand()->insert('tbl_post', [
+                'user_id' => $user_id,
+                'title' => $this->title,
+                'content' => $this->content,
+            ])->execute();
+        }
+        return true;
+    }
 }
