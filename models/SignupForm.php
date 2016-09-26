@@ -2,6 +2,7 @@
 namespace app\models;
 use Yii;
 use yii\base\Model;
+use app\models\TblUser;
 
 class SignupForm extends Model {
     
@@ -23,21 +24,19 @@ class SignupForm extends Model {
     }
     
     /**
-     * Saves a new user to the database.
+     * Creates a new user from the model data
      * 
-     * @return boolean
+     * @return TblUser
      */
-    public function signup () {
+    public function newUser() {
         
-        if($this->validate()) {
-            Yii::$app->db->createCommand()->insert('tbl_user', [
-                'username' => $this->username,
-                'email' => $this->email,
-                'password' => Yii::$app->getSecurity()->generatePasswordHash($this->password),
-                'authkey' => Yii::$app->getSecurity()->generateRandomString(),
-            ])->execute();
-        }
-        return true;
+        $user = new TblUser;
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
+        $user->setAuthKey();
+        
+        return $user;
     }
 }
-?>
+

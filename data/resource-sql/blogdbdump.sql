@@ -62,7 +62,7 @@ CREATE TABLE `tbl_post` (
   PRIMARY KEY (`post_id`),
   KEY `post_user_fk` (`user_id`),
   CONSTRAINT `post_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `tbl_post` (
 
 LOCK TABLES `tbl_post` WRITE;
 /*!40000 ALTER TABLE `tbl_post` DISABLE KEYS */;
-INSERT INTO `tbl_post` VALUES (1,4,'2016-09-25 09:40:27','This is a test.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Your mom in a bicycle.'),(2,3,'2016-09-25 14:40:14','Another test.','This is a post made by another user. PINGAAAAAAAAS.');
+INSERT INTO `tbl_post` VALUES (1,4,'2016-09-25 09:40:27','This is a test.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Your mom in a bicycle.'),(2,3,'2016-09-25 14:40:14','Another test.','This is a post made by another user. PINGAAAAAAAAS.'),(3,14,'2016-09-26 11:07:56','Aaaand another test.','This is testing save(); to see if it works.');
 /*!40000 ALTER TABLE `tbl_post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `tbl_user` (
   `authkey` char(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `name` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +99,7 @@ CREATE TABLE `tbl_user` (
 
 LOCK TABLES `tbl_user` WRITE;
 /*!40000 ALTER TABLE `tbl_user` DISABLE KEYS */;
-INSERT INTO `tbl_user` VALUES (3,'lucchi','luna@gmail.com','$2y$13$suCPXF4AnJtoqMZzDXCBgu5NOZ4j3sfbkqpu.wsLOl1xjxBmgwiJ6','-iojuryx8AY8LxYjp82Aq8gfiRZFXGsE'),(4,'nimmos','nisanvera23@gmail.com','$2y$13$nxjq.nAUG4c3nYSFvMNw1eC0JVTIjgwZYMfA6ub7o4ytYKqxANr.O','HZ-QNTiBxOWmXuw2GY4QTaGwkLBs_RkO');
+INSERT INTO `tbl_user` VALUES (3,'lucchi','luna@gmail.com','$2y$13$suCPXF4AnJtoqMZzDXCBgu5NOZ4j3sfbkqpu.wsLOl1xjxBmgwiJ6','-iojuryx8AY8LxYjp82Aq8gfiRZFXGsE'),(4,'nimmos','nisanvera23@gmail.com','$2y$13$nxjq.nAUG4c3nYSFvMNw1eC0JVTIjgwZYMfA6ub7o4ytYKqxANr.O','HZ-QNTiBxOWmXuw2GY4QTaGwkLBs_RkO'),(14,'daniel','alegandoinocencia@hotmail.com','$2y$13$jJILq.Ij6Sp4eqoSoOtV3eV49f53vuUwqFOMFiiY.VT5YsuNAqLeu','RZ0xxQEX6kY1gxj1e4n9OJRjdcDnj59V');
 /*!40000 ALTER TABLE `tbl_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -112,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-25 17:12:18
+-- Dump completed on 2016-09-26 13:12:05

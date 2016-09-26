@@ -39,15 +39,12 @@ class CommentForm extends Model
      * @param type $user_id this is the author of the post
      * @return boolean
      */
-    public function publishComment($user_id, $post_id)
+    public function newComment($user_id, $post_id)
     {
-        if($this->validate()) {
-            Yii::$app->db->createCommand()->insert('tbl_comment', [
-                'user_id' => $user_id,
-                'post_id' => $post_id,
-                'content' => $this->content,
-            ])->execute();
-        }
-        return true;
+        $comment = new TblComment();
+        $comment->user_id = $user_id;
+        $comment->post_id = $post_id;
+        $comment->content = $this->content;
+        return $comment;
     }
 }

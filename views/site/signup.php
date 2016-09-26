@@ -8,7 +8,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Login', 'url' => ['login']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class = "row">
-   <div class = "col-lg-5">
+    <div class = "col-lg-5">
        
       <?php $form = ActiveForm::begin(['id' => 'signup']); ?>
 
@@ -26,5 +26,5 @@ $this->params['breadcrumbs'][] = $this->title;
        
       <?php ActiveForm::end(); ?>
        
-   </div>
+    </div>
 </div>

@@ -44,15 +44,12 @@ class PostForm extends Model
      * @param type $user_id this is the author of the post
      * @return boolean
      */
-    public function publishPost($user_id)
+    public function newPost($user_id)
     {
-        if($this->validate()) {
-            Yii::$app->db->createCommand()->insert('tbl_post', [
-                'user_id' => $user_id,
-                'title' => $this->title,
-                'content' => $this->content,
-            ])->execute();
-        }
-        return true;
+        $post = new TblPost();
+        $post->user_id = $user_id;
+        $post->title = $this->title;
+        $post->content = $this->content;
+        return $post;
     }
 }

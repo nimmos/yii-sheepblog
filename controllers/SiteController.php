@@ -6,14 +6,11 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
-// Models for the blog
-use app\models\TblPost;
+
 // Models for the blog forms
-use app\models\PostForm;
+use app\models\LoginForm;
 use app\models\SignupForm;
-use app\models\CommentForm;
+use app\models\ContactForm;
 
 class SiteController extends Controller
 {
@@ -66,7 +63,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->redirect(['post/index']);
     }
 
     /**
@@ -78,9 +75,12 @@ class SiteController extends Controller
     {
         $model = new SignupForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+        if ($model->load(Yii::$app->request->post())
+                && $model->validate()
+                && $model->newUser()->save())
+        {
             return $this->refresh();
-        }        
+        }
         return $this->render('signup', ['model' => $model]);
     }
 
@@ -96,6 +96,7 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
+        
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
@@ -114,43 +115,6 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-
-    /**
-     * Displays post composing page.
-     *
-     * @return string
-     */
-    public function actionPostCompose ()
-    {
-        $model = new PostForm();
-
-        if ($model->load(Yii::$app->request->post())
-                && $model->publishPost(Yii::$app->user->getId())) {
-            return $this->goBack();
-        }
-        return $this->render('post-compose', ['model' => $model]);
-    }
-
-    /**
-     * Displays post view.
-     *
-     * @return string
-     */
-    public function actionPost ($post_id = 1)
-    {
-        $model = new CommentForm();
-        
-        if ($model->load(Yii::$app->request->post())
-                && $model->publishComment(
-                        Yii::$app->user->getId(),
-                        $post_id))
-        {
-            return $this->refresh();
-        }
-        return $this->render('post', [
-            'post' => TblPost::getPostById($post_id),
-        ]);
     }
 
     /**

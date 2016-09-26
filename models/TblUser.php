@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\SignupForm;
 
 /**
  * This is the model class for table "tbl_user".
@@ -18,7 +19,7 @@ use Yii;
  */
 class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
-     
+    
     /**
      * @inheritdoc
      */
@@ -33,7 +34,7 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['user_id', 'email'], 'required'],
+            ['email', 'required'],
             [['user_id'], 'integer'],
             [['username', 'password'], 'string', 'max' => 80],
             [['email'], 'string', 'max' => 40],
@@ -100,7 +101,29 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return $this->authkey === $authkey;
     }
-
+    
+    ////////////////////////////////////////////////
+    // Getters-setters
+    ////////////////////////////////////////////////
+    
+    /**
+     * Encrypts a password generating a hash string.
+     * 
+     * @param type $password
+     */
+    public function setPassword ($password)
+    {
+        $this->password = Yii::$app->security->generatePasswordHash($password);
+    }
+    
+    /**
+     * Sets an authorization key
+     */
+    public function setAuthkey ()
+    {
+        $this->authkey = Yii::$app->getSecurity()->generateRandomString();
+    }
+    
     ////////////////////////////////////////////////
     // These methods are required
     // for the login logic
@@ -125,17 +148,17 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return Yii::$app->security->validatePassword($password, $this->password);
     }
-
-    /**
-     * Encrypts a password generating a hash string.
-     * 
-     * @param type $password
-     */
-    public function setPassword ($password)
-    {
-        $this->$password = Yii::$app->security->generatePasswordHash($password);
-    }
     
+    ////////////////////////////////////////////////
+    // These methods look up the database
+    ////////////////////////////////////////////////
+    
+    /**
+     * It finds a username based on its id.
+     * 
+     * @param type $user_id
+     * @return type
+     */
     public static function getUsernameById ($user_id) {
         return self::findOne($user_id)->username;
     }

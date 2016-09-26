@@ -35,8 +35,8 @@ class TblComment extends \yii\db\ActiveRecord
             [['user_id', 'post_id'], 'integer'],
             [['time'], 'safe'],
             [['content'], 'string'],
-            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'post_id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'user_id']],
+            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblPost::className(), 'targetAttribute' => ['post_id' => 'post_id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblUser::className(), 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
 
@@ -59,7 +59,7 @@ class TblComment extends \yii\db\ActiveRecord
      */
     public function getPost()
     {
-        return $this->hasOne(Post::className(), ['post_id' => 'post_id']);
+        return $this->hasOne(TblPost::className(), ['post_id' => 'post_id']);
     }
 
     /**
@@ -67,6 +67,6 @@ class TblComment extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['user_id' => 'user_id']);
+        return $this->hasOne(TblUser::className(), ['user_id' => 'user_id']);
     }
 }
