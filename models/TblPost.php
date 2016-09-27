@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "tbl_post".
  *
@@ -32,11 +30,17 @@ class TblPost extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            // user_id rules
             [['user_id'], 'integer'],
-            [['time'], 'safe'],
-            [['content'], 'string'],
-            [['title'], 'string', 'max' => 160],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblUser::className(), 'targetAttribute' => ['user_id' => 'user_id']],
+            // time rules
+            [['time'], 'safe'],
+            // title rules
+            ['title', 'required', 'message' => 'You have to write a title'],
+            [['title'], 'string', 'max' => 160],
+            // content rules
+            ['content', 'required', 'message' => 'Don\'t you have anything to say? Write down something'],
+            [['content'], 'string'],
         ];
     }
 
@@ -47,10 +51,10 @@ class TblPost extends \yii\db\ActiveRecord
     {
         return [
             'post_id' => 'Post ID',
-            'user_id' => 'User ID',
+            'user_id' => 'Author',
             'time' => 'Time',
-            'title' => 'Title',
-            'content' => 'Content',
+            'title' => 'Post title',
+            'content' => 'Post content',
         ];
     }
 
@@ -79,16 +83,5 @@ class TblPost extends \yii\db\ActiveRecord
     public static function getPostById($post_id = 1) {
         $post = TblPost::findOne($post_id);
         return $post;
-    }
-    
-    /**
-     * Updates post data with info from a model.
-     * 
-     * @param type $model
-     */
-    public function updateFromModel ($model)
-    {
-        $this->title = $model->title;
-        $this->content = $model->content;
     }
 }

@@ -33,7 +33,7 @@ CREATE TABLE `tbl_comment` (
   KEY `comm_post_fk` (`post_id`),
   CONSTRAINT `comm_post_fk` FOREIGN KEY (`post_id`) REFERENCES `tbl_post` (`post_id`),
   CONSTRAINT `comm_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `tbl_comment` (
 
 LOCK TABLES `tbl_comment` WRITE;
 /*!40000 ALTER TABLE `tbl_comment` DISABLE KEYS */;
-INSERT INTO `tbl_comment` VALUES (1,4,1,'2016-09-25 13:13:23','This is a comment.'),(2,4,1,'2016-09-25 13:55:35','Another comment.'),(3,4,2,'2016-09-25 15:09:03','This is not a test, this is a memefest.'),(4,3,2,'2016-09-25 15:09:57','This is not a memefest, wtf :C'),(5,14,3,'2016-09-26 14:24:56','Commenting with save();'),(6,3,1,'2016-09-26 15:33:27','I\'m replying this post with another user.'),(7,4,1,'2016-09-27 07:38:33','Huh?'),(8,3,2,'2016-09-27 07:43:56','From the third comment, this does a strange thing with the offset.');
+INSERT INTO `tbl_comment` VALUES (1,2,1,'2016-09-27 17:11:38',':v');
 /*!40000 ALTER TABLE `tbl_comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +62,7 @@ CREATE TABLE `tbl_post` (
   PRIMARY KEY (`post_id`),
   KEY `post_user_fk` (`user_id`),
   CONSTRAINT `post_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `tbl_post` (
 
 LOCK TABLES `tbl_post` WRITE;
 /*!40000 ALTER TABLE `tbl_post` DISABLE KEYS */;
-INSERT INTO `tbl_post` VALUES (1,4,'2016-09-25 09:40:27','This is a test.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Your mom in a bicycle.\r\n<br><br>\r\nEdit - This is edited.'),(2,3,'2016-09-27 09:28:00','Another test.','This is a post made by another user -by Lucchi.<br>\r\nEdit - This is edited on purpose.<br>\r\nEdit - another edit to see if time is re-updated.'),(3,14,'2016-09-26 11:07:56','Aaaand another test.','This is testing save(); to see if it works.<br>\r\nEdit - this works fine.');
+INSERT INTO `tbl_post` VALUES (1,1,'2016-09-27 17:09:32','Hitmark celebration post.','This is the first post after every test performed was successful. The following features have proved to be correct and totally functional:<br><br>\r\n<strong>\r\n- Sign up and login.<br>\r\n- Make a post.<br>\r\n- Make a comment.<br>\r\n- See a post.<br>\r\n- Edit a post.<br><br>\r\n</strong>\r\nNeat, right?');
 /*!40000 ALTER TABLE `tbl_post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `tbl_user` (
   `authkey` char(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `name` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +99,7 @@ CREATE TABLE `tbl_user` (
 
 LOCK TABLES `tbl_user` WRITE;
 /*!40000 ALTER TABLE `tbl_user` DISABLE KEYS */;
-INSERT INTO `tbl_user` VALUES (3,'lucchi','luna@gmail.com','$2y$13$suCPXF4AnJtoqMZzDXCBgu5NOZ4j3sfbkqpu.wsLOl1xjxBmgwiJ6','-iojuryx8AY8LxYjp82Aq8gfiRZFXGsE'),(4,'nimmos','nisanvera23@gmail.com','$2y$13$nxjq.nAUG4c3nYSFvMNw1eC0JVTIjgwZYMfA6ub7o4ytYKqxANr.O','HZ-QNTiBxOWmXuw2GY4QTaGwkLBs_RkO'),(14,'daniel','alegandoinocencia@hotmail.com','$2y$13$jJILq.Ij6Sp4eqoSoOtV3eV49f53vuUwqFOMFiiY.VT5YsuNAqLeu','RZ0xxQEX6kY1gxj1e4n9OJRjdcDnj59V');
+INSERT INTO `tbl_user` VALUES (1,'nimmos','nisanvera23@gmail.com','$2y$13$RU1b5BEx4Hfd/e0UMjXWKe9EQJmpSaB.4EInLu5yb2DE/Xvr51QU2','JpAyjgRoz-HTJmCHxlLaw83otUrWTYM-'),(2,'lucchi','lucia@correo.com','$2y$13$Zt.9orEKRg921P.8/s39COBB//eGBiZOc7mg15XxVwbkdKtpsdkly','3RVoSwbzCjvY2M1f_c5jsZ3DDS58lHS3');
 /*!40000 ALTER TABLE `tbl_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -112,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-27 15:17:14
+-- Dump completed on 2016-09-27 19:11:53

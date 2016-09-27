@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <!-- If the user is an authenticated user -->
     
-    <?php if (!$isGuest): ?>
+    <?php if (!Yii::$app->user->isGuest): ?>
     
         <!-- Let the user edit the post -->
         <?php if ($isAuthor): ?>
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
     
         <!-- Display comment form -->
-        <?= $this->render('comment-compose', ['model' => new app\models\CommentForm()]) ?>
+        <?= $this->render('comment-compose', ['model' => $comment]) ?>
     
     <!-- If the user is a guest, it can't comment and is encouraged to sign up -->
     
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?php foreach ($comments as $comment){ ?>
         <?= $this->render('comment', [
-            'username' => TblUser::getUsernameById($comment->user_id),
+            'username' => TblUser::findUsernameById($comment->user_id),
             'comment' => $comment,
         ]) ?>
     <?php } ?>

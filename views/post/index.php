@@ -23,7 +23,7 @@ $this->title = 'Sheepblog';
                 <li class="list-group-item">
                     <?= $this->render('post-resume', [
                         'post' => $post,
-                        'author' => TblUser::getUsernameById($post->user_id),
+                        'author' => TblUser::findUsernameById($post->user_id),
                     ]) ?>
                 </li>
             <?php } ?>

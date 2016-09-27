@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use app\models\SignupForm;
 
 /**
  * This is the model class for table "tbl_user".
@@ -34,12 +33,21 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            ['email', 'required'],
-            [['user_id'], 'integer'],
-            [['username', 'password'], 'string', 'max' => 80],
-            [['email'], 'string', 'max' => 40],
-            [['authkey'], 'string', 'max' => 50],
-            [['username'], 'unique'],
+            // user_id rules
+            ['user_id', 'integer'],
+            // username rules
+            ['username', 'unique'],
+            ['username', 'required', 'message' => 'User MUST HAVE a name'],
+            ['username', 'string', 'max' => 30],
+            // email rules
+            ['email', 'required', 'message' => 'You must enter an email'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 40],
+            // password rules
+            ['password', 'required', 'message' => 'This is also required'],
+            ['password', 'string', 'length' => [8, 80]],
+            // authkey rules
+            ['authkey', 'string', 'max' => 50],
         ];
     }
 
@@ -53,7 +61,6 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'username' => 'Username',
             'email' => 'Email',
             'password' => 'Password',
-            'authkey' => 'Authkey',
         ];
     }
 
@@ -131,8 +138,11 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     ////////////////////////////////////////////////
 
     /**
-    * This will find a user in the db with the name $username
-    */
+     * This will find a user in the db with the name $username
+     * 
+     * @param type $username
+     * @return type
+     */
     public static function findByUsername($username)
     {
         return self::findOne(['username' => $username]);
@@ -159,7 +169,8 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
      * @param type $user_id
      * @return type
      */
-    public static function getUsernameById ($user_id) {
+    public static function findUsernameById ($user_id)
+    {
         return self::findOne($user_id)->username;
     }
 }

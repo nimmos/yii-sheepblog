@@ -32,11 +32,15 @@ class TblComment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            // user_id, post_id rules
             [['user_id', 'post_id'], 'integer'],
-            [['time'], 'safe'],
-            [['content'], 'string'],
-            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblPost::className(), 'targetAttribute' => ['post_id' => 'post_id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblUser::className(), 'targetAttribute' => ['user_id' => 'user_id']],
+            ['user_id', 'exist', 'skipOnError' => true, 'targetClass' => TblUser::className(), 'targetAttribute' => ['user_id' => 'user_id']],
+            ['post_id', 'exist', 'skipOnError' => true, 'targetClass' => TblPost::className(), 'targetAttribute' => ['post_id' => 'post_id']],
+            // time rules
+            ['time', 'safe'],
+            // content rules
+            ['content', 'required', 'message' => 'You can\'t comment nothing'],
+            ['content', 'string'],            
         ];
     }
 

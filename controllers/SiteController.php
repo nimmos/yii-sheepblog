@@ -9,7 +9,7 @@ use yii\filters\VerbFilter;
 
 // Models for the blog forms
 use app\models\LoginForm;
-use app\models\SignupForm;
+use app\models\TblUser;
 use app\models\ContactForm;
 
 class SiteController extends Controller
@@ -73,13 +73,17 @@ class SiteController extends Controller
      */
     public function actionSignup ()
     {
-        $model = new SignupForm();
+        $model = new TblUser();
 
-        if ($model->load(Yii::$app->request->post())
-                && $model->validate()
-                && $model->newUser()->save())
+        if ($model->load(Yii::$app->request->post()))
         {
-            return $this->refresh();
+            // Set security properties before performing save()
+            $model->setPassword($model->password);
+            $model->setAuthkey();
+            if ($model->validate() && $model->save())
+            {
+                return $this->refresh();
+            }
         }
         return $this->render('signup', ['model' => $model]);
     }
