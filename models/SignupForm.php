@@ -24,7 +24,8 @@ class SignupForm extends Model {
     }
     
     /**
-     * Creates a new user from the model data
+     * Populates a new user with the data
+     * obtained with the corresponding model.
      * 
      * @return TblUser
      */

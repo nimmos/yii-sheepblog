@@ -39,17 +39,31 @@ class PostForm extends Model
     }
     
     /**
-     * Saves a new post to the database.
+     * Populates a new post with the data
+     * obtained with the corresponding model.
      * 
-     * @param type $user_id this is the author of the post
-     * @return boolean
+     * @param type $user_id
+     * @return \app\models\TblPost
      */
-    public function newPost($user_id)
+    public function newPost($user_id, $post_id = null)
     {
         $post = new TblPost();
+        $post->post_id = $post_id;
         $post->user_id = $user_id;
         $post->title = $this->title;
         $post->content = $this->content;
         return $post;
+    }
+    
+    /**
+     * Populates form model with post data,
+     * used for editing posts.
+     * 
+     * @param type $post
+     */
+    public function populateForm($post)
+    {
+        $this->title = $post->title;
+        $this->content = $post->content;
     }
 }

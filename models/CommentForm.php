@@ -34,10 +34,12 @@ class CommentForm extends Model
     }
 
     /**
-     * Saves a new comment to the database.
+     * Populates a new comment with the data
+     * obtained with the corresponding model.
      * 
-     * @param type $user_id this is the author of the post
-     * @return boolean
+     * @param type $user_id
+     * @param type $post_id
+     * @return \app\models\TblComment
      */
     public function newComment($user_id, $post_id)
     {

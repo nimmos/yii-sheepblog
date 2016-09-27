@@ -18,14 +18,19 @@ use app\models\CommentForm;
 
 class PostController extends \yii\web\Controller
 {
+    /**
+     * Default index.
+     * 
+     * @return type
+     */
     public function actionIndex()
     {
         // Retrieve all posts
-        $posts = TblPost::find()->all();
-        
-        // Sort from recent posts to older posts
-        ArrayHelper::multisort($posts, ['time'], [SORT_DESC]);
-        
+        // sorted from recent posts to older posts
+        $posts = TblPost::find()
+                ->orderBy('time DESC')
+                ->all();
+                        
         return $this->render('index', [
             'posts' => $posts,
         ]);
@@ -37,7 +42,7 @@ class PostController extends \yii\web\Controller
      * @param type $p post_id
      * @return type
      */
-    public function actionPost ($p = 1)
+    public function actionPost ($p)
     {
         $model = new CommentForm();
         
@@ -53,7 +58,17 @@ class PostController extends \yii\web\Controller
         // Obtain the required post by its id
         $post = TblPost::getPostById($p);
         
+        // Identify who the current user is,
+        // and if it's the author of the post
+        $isGuest = Yii::$app->user->isGuest;
+        if (!$isGuest)
+        {
+            $isAuthor = Yii::$app->user->id == $post->user_id;
+        }
+        
         return $this->render('post', [
+            'isGuest' => $isGuest,
+            'isAuthor' => $isAuthor,
             'post' => $post,
             'author' => TblUser::getUsernameById($post->user_id),
             'comments' => TblComment::findAll(['post_id' => $p]),
@@ -75,7 +90,34 @@ class PostController extends \yii\web\Controller
         {
             return $this->goBack();
         }
-        return $this->render('post-compose', ['model' => $model]);
+        return $this->render('post-compose', [
+            'model' => $model,
+            'edit' => false
+        ]);
     }
 
+    
+    public function actionEditPost ($p)
+    {
+        // Obtain the post to edit
+        $post = TblPost::getPostById($p);
+        
+        $model = new PostForm();
+        $model->populateForm($post);
+        
+        if ($model->load(Yii::$app->request->post())
+                && $model->validate())
+        {
+            $post->updateFromModel($model);
+            $post->save();
+            
+            return $this->redirect(['post/post',
+                'p' => $p]);
+        }
+        
+        return $this->render('post-compose', [
+            'model' => $model,
+            'edit' => true
+        ]);
+    }
 }

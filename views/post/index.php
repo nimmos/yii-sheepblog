@@ -1,7 +1,5 @@
 <?php
-
-use yii\helpers\Html;
-/* @var $this yii\web\View */
+use app\models\TblUser;
 
 $this->title = 'Sheepblog';
 ?>
@@ -20,28 +18,16 @@ $this->title = 'Sheepblog';
 
     <div class="body-content">
 
-        <?php foreach ($posts as $post){ ?>
-    
-        <div class="row">
-            <div class="col-lg-4">
-                <h3>
-                    <?= $post->title ?>
-                </h3>
-                <p>
-                    <!-- Limits the entry to 160 characters -->
-                    <?= (strlen($post->content)>=160) ?
-                    substr($post->content, 0, 160) . "..."
-                    : $post->content ?>
-                </p>
-                <?= Html::a('Read this post',
-                    ['/post/post', 'p' => $post->post_id],
-                    ['class' => 'btn btn-lg btn-default']
-                )?>
-                <hr>
-            </div>
-        </div>
-
-        <?php } ?>
+        <ul class="list-group">
+            <?php foreach ($posts as $post){ ?>
+                <li class="list-group-item">
+                    <?= $this->render('post-resume', [
+                        'post' => $post,
+                        'author' => TblUser::getUsernameById($post->user_id),
+                    ]) ?>
+                </li>
+            <?php } ?>
+        </ul>
 
     </div>
 </div>

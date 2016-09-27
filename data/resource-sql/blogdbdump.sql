@@ -33,7 +33,7 @@ CREATE TABLE `tbl_comment` (
   KEY `comm_post_fk` (`post_id`),
   CONSTRAINT `comm_post_fk` FOREIGN KEY (`post_id`) REFERENCES `tbl_post` (`post_id`),
   CONSTRAINT `comm_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `tbl_comment` (
 
 LOCK TABLES `tbl_comment` WRITE;
 /*!40000 ALTER TABLE `tbl_comment` DISABLE KEYS */;
-INSERT INTO `tbl_comment` VALUES (1,4,1,'2016-09-25 13:13:23','This is a comment.'),(2,4,1,'2016-09-25 13:55:35','Another comment.'),(3,4,2,'2016-09-25 15:09:03','This is not a test, this is a memefest.'),(4,3,2,'2016-09-25 15:09:57','This is not a memefest, wtf :C');
+INSERT INTO `tbl_comment` VALUES (1,4,1,'2016-09-25 13:13:23','This is a comment.'),(2,4,1,'2016-09-25 13:55:35','Another comment.'),(3,4,2,'2016-09-25 15:09:03','This is not a test, this is a memefest.'),(4,3,2,'2016-09-25 15:09:57','This is not a memefest, wtf :C'),(5,14,3,'2016-09-26 14:24:56','Commenting with save();'),(6,3,1,'2016-09-26 15:33:27','I\'m replying this post with another user.'),(7,4,1,'2016-09-27 07:38:33','Huh?'),(8,3,2,'2016-09-27 07:43:56','From the third comment, this does a strange thing with the offset.');
 /*!40000 ALTER TABLE `tbl_comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56,13 +56,13 @@ DROP TABLE IF EXISTS `tbl_post`;
 CREATE TABLE `tbl_post` (
   `post_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` varchar(160) DEFAULT NULL,
   `content` text,
   PRIMARY KEY (`post_id`),
   KEY `post_user_fk` (`user_id`),
   CONSTRAINT `post_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `tbl_post` (
 
 LOCK TABLES `tbl_post` WRITE;
 /*!40000 ALTER TABLE `tbl_post` DISABLE KEYS */;
-INSERT INTO `tbl_post` VALUES (1,4,'2016-09-25 09:40:27','This is a test.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Your mom in a bicycle.'),(2,3,'2016-09-25 14:40:14','Another test.','This is a post made by another user. PINGAAAAAAAAS.'),(3,14,'2016-09-26 11:07:56','Aaaand another test.','This is testing save(); to see if it works.');
+INSERT INTO `tbl_post` VALUES (1,4,'2016-09-25 09:40:27','This is a test.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Your mom in a bicycle.\r\n<br><br>\r\nEdit - This is edited.'),(2,3,'2016-09-27 09:28:00','Another test.','This is a post made by another user -by Lucchi.<br>\r\nEdit - This is edited on purpose.<br>\r\nEdit - another edit to see if time is re-updated.'),(3,14,'2016-09-26 11:07:56','Aaaand another test.','This is testing save(); to see if it works.<br>\r\nEdit - this works fine.');
 /*!40000 ALTER TABLE `tbl_post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-26 13:12:05
+-- Dump completed on 2016-09-27 15:17:14

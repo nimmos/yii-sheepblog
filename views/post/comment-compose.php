@@ -2,6 +2,9 @@
    use yii\bootstrap\ActiveForm;
    use yii\bootstrap\Html;
 ?>
+
+<!-- Comment composing form -->
+
 <div class = "row">
    <div class = "col-lg-5">
       <?php $form = ActiveForm::begin(['id' => 'comment-compose-form']); ?>

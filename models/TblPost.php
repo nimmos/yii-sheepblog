@@ -80,4 +80,15 @@ class TblPost extends \yii\db\ActiveRecord
         $post = TblPost::findOne($post_id);
         return $post;
     }
+    
+    /**
+     * Updates post data with info from a model.
+     * 
+     * @param type $model
+     */
+    public function updateFromModel ($model)
+    {
+        $this->title = $model->title;
+        $this->content = $model->content;
+    }
 }
