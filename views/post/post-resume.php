@@ -1,24 +1,24 @@
 <?php
 use yii\helpers\Html;
+$content = strip_tags($post->content);
 ?>
 
 <!-- View for each post resume -->
 
 <div>
     <h3>
-        <?= $post->title ?>
+        <?= Html::a(Html::encode($post->title),
+            ['/post/post', 'p' => $post->post_id])
+        ?>
     </h3>
     <p style="color:#ababab;">
         <strong>Posted by: </strong><?= $author ?>
     </p>
     <p>
         <!-- Limits the entry to 160 characters -->
-        <?= (strlen($post->content)>=160) ?
-        substr($post->content, 0, 160) . "..."
+        <?= (strlen($content)>=160) ?
+        (substr($content, 0, 160)) . '...'
         : $post->content ?>
+        <br>
     </p>
-        <?= Html::a('Read this post',
-            ['/post/post', 'p' => $post->post_id],
-            ['class' => 'btn btn-sm btn-default']
-        )?>
 </div>

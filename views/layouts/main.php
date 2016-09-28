@@ -28,7 +28,6 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => 'Sheepblog'
-            // This is to test if we're browsing like a guest or a user
             . (Yii::$app->user->isGuest ? '' :
             (': welcome ' . Yii::$app->user->identity->username . '!')),
         'brandUrl' => Yii::$app->homeUrl,

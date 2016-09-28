@@ -173,4 +173,15 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return self::findOne($user_id)->username;
     }
+    
+    /**
+     * It finds an id based on the username.
+     * 
+     * @param type $username
+     * @return type
+     */
+    public static function findIdByUsername ($username)
+    {
+        return self::findOne(['username' => $username])->user_id;
+    }
 }

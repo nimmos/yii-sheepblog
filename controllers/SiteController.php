@@ -80,8 +80,16 @@ class SiteController extends Controller
             // Set security properties before performing save()
             $model->setPassword($model->password);
             $model->setAuthkey();
+            
             if ($model->validate() && $model->save())
             {
+                // Role assignment
+                // (Does this have to be here?)
+                $auth = Yii::$app->authManager;
+                $role = $auth->getRole('author');
+                $auth->assign($role,
+                        TblUser::findIdByUsername($model->username)
+                );
                 return $this->refresh();
             }
         }

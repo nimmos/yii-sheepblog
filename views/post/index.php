@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Html;
+
 use app\models\TblUser;
 
 $this->title = 'Sheepblog';
@@ -11,6 +14,14 @@ $this->title = 'Sheepblog';
 
         <h1><b>Sheepblog</b></h1>
         <p>Why 'Sheepblog'? Cause I like sheeps, that's all.</p>
+        
+        <!-- If the user is authenticated, this makes a button for posting -->
+        <?php if (!Yii::$app->user->isGuest): ?>
+            <?= Html::a('Why don\'t we start by posting something',
+                ['/post/post-compose'],
+                ['class' => 'btn btn-primary btn-block'])
+            ?>
+        <?php endif; ?>
 
     </div>
     

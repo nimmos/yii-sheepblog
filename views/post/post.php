@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <div>
         <h1>
-            <?= $this->title ?>
+            <?= Html::encode($this->title) ?>
         </h1>
         <p>
             <?= HtmlPurifier::process($post->content) ?>
@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="well well-sm" style="color:#ababab;">
         <p>
             <strong>Posted on: </strong><?= $post->time ?><br>
-            <strong>Words by: </strong><?= $author ?>
+            <strong>Words by: </strong><?= Html::encode($author) ?>
         </p>
     </div>
     
@@ -32,13 +32,22 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?php if (!Yii::$app->user->isGuest): ?>
     
-        <!-- Let the user edit the post -->
-        <?php if ($isAuthor): ?>
+        <!--
+            Let the user edit the post if:
+            1: It's an admin user.
+            2: It's the author of the post.
+        -->
+        <?php if (
+            Yii::$app->user->can('updateOwnPost', ['user_id' => $post->user_id])
+            || Yii::$app->user->can('updatePost')
+        ): ?>
+        
             <?= Html::a('Edit the post <span class="glyphicon glyphicon-pencil"/>',
                 ['/post/edit-post', 'p' => $post->post_id],
                 ['class' => 'btn btn-md btn-warning']
             )?>
             <hr>
+            
         <?php endif; ?>
     
         <!-- Display comment form -->
