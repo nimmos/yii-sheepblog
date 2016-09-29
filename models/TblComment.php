@@ -54,7 +54,7 @@ class TblComment extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'post_id' => 'Post ID',
             'time' => 'Time',
-            'content' => 'Content',
+            'content' => 'Say something',
         ];
     }
 

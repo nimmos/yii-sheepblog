@@ -37,6 +37,7 @@ class PostController extends \yii\web\Controller
      */
     public function actionPost ($p)
     {
+        
         // Obtain the required post by its id
         $post = TblPost::getPostById($p);
         
@@ -101,5 +102,42 @@ class PostController extends \yii\web\Controller
             'model' => $model,
             'edit' => true
         ]);
+    }
+    
+    /**
+     * Deletes a specified post
+     * 
+     * @param type $p
+     * @return type
+     */
+    public function actionDeletePost ($p)
+    {
+        $post = TblPost::findOne($p);
+        if (isset($post)) {
+            $comments = TblComment::findAll(['post_id' => $p]);
+            foreach($comments as $comment) {
+                $comment->delete();
+            }
+            $post->delete();
+            return $this->goHome();
+        }
+        return $this->goBack();
+    }
+    
+    /**
+     * Deletes a specified comment
+     * 
+     * @param type $c
+     * @param type $p
+     * @return type
+     */
+    public function actionDeleteComment ($c, $p)
+    {
+        $comment = TblComment::findOne($c);
+        if (isset($comment)) {
+            $comment->delete();
+            return $this->redirect(['post/post', 'p' => $p]);
+        }
+        return $this->goBack();
     }
 }

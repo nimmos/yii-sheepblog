@@ -6,16 +6,17 @@ use yii\helpers\HtmlPurifier;
 use app\models\TblUser;
 
 $this->title = $post->title;
+$this->params['p'] = $post->post_id;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div>
     
     <!-- Post section -->
     
+    <div class="jumbotron">
+        <h2><?= Html::encode($this->title) ?></h2>
+    </div>
     <div>
-        <h1>
-            <?= Html::encode($this->title) ?>
-        </h1>
         <p>
             <?= HtmlPurifier::process($post->content) ?>
         </p>
@@ -32,23 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?php if (!Yii::$app->user->isGuest): ?>
     
-        <!--
-            Let the user edit the post if:
-            1: It's an admin user.
-            2: It's the author of the post.
-        -->
-        <?php if (
-            Yii::$app->user->can('updateOwnPost', ['user_id' => $post->user_id])
-            || Yii::$app->user->can('updatePost')
-        ): ?>
-        
-            <?= Html::a('Edit the post <span class="glyphicon glyphicon-pencil"/>',
-                ['/post/edit-post', 'p' => $post->post_id],
-                ['class' => 'btn btn-md btn-warning']
-            )?>
-            <hr>
-            
-        <?php endif; ?>
+        <!-- Display post administration -->
+        <?= $this->render('post-admin', ['user_id' => $post->user_id])?>
     
         <!-- Display comment form -->
         <?= $this->render('comment-compose', ['model' => $comment]) ?>

@@ -1,6 +1,15 @@
 <?php
 use yii\helpers\Html;
-$content = strip_tags($post->content);
+
+// Content unformatting
+$data = strip_tags($post->content);
+$content = html_entity_decode($data, ENT_QUOTES, 'UTF-8');
+
+// Limits the entry to 160 characters
+if (strlen($content)>=160)
+{
+    $content = mb_substr($content, 0, 160, 'UTF-8') . '...';
+}
 ?>
 
 <!-- View for each post resume -->
@@ -14,11 +23,5 @@ $content = strip_tags($post->content);
     <p style="color:#ababab;">
         <strong>Posted by: </strong><?= $author ?>
     </p>
-    <p>
-        <!-- Limits the entry to 160 characters -->
-        <?= (strlen($content)>=160) ?
-        (substr($content, 0, 160)) . '...'
-        : $post->content ?>
-        <br>
-    </p>
+    <p><?= $content ?><br></p>
 </div>

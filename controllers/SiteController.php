@@ -90,7 +90,8 @@ class SiteController extends Controller
                 $auth->assign($role,
                         TblUser::findIdByUsername($model->username)
                 );
-                return $this->refresh();
+                Yii::$app->session->setFlash('signupSuccess');
+                return $this->redirect(['site/login']);
             }
         }
         return $this->render('signup', ['model' => $model]);

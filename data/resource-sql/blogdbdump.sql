@@ -37,7 +37,7 @@ CREATE TABLE `tbl_auth_assignment` (
 
 LOCK TABLES `tbl_auth_assignment` WRITE;
 /*!40000 ALTER TABLE `tbl_auth_assignment` DISABLE KEYS */;
-INSERT INTO `tbl_auth_assignment` VALUES ('admin','1',1475077228),('author','5',1475078647);
+INSERT INTO `tbl_auth_assignment` VALUES ('admin','1',1475077228),('author','5',1475078647),('author','6',1475141940),('author','7',1475142050),('author','8',1475142181),('author','9',1475142588);
 /*!40000 ALTER TABLE `tbl_auth_assignment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +144,7 @@ CREATE TABLE `tbl_comment` (
   KEY `comm_post_fk` (`post_id`),
   CONSTRAINT `comm_post_fk` FOREIGN KEY (`post_id`) REFERENCES `tbl_post` (`post_id`),
   CONSTRAINT `comm_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,7 +153,7 @@ CREATE TABLE `tbl_comment` (
 
 LOCK TABLES `tbl_comment` WRITE;
 /*!40000 ALTER TABLE `tbl_comment` DISABLE KEYS */;
-INSERT INTO `tbl_comment` VALUES (1,2,1,'2016-09-27 17:11:38',':v'),(2,1,2,'2016-09-27 21:00:03','You shouldn\'t use HtmlPurifier::process() there. You should use plain text processing. Try if you can use both.'),(3,1,2,'2016-09-28 12:47:04','When using Html::encode(), if you wanna get rid of the tags use PHP strip_tags().'),(4,1,2,'2016-09-28 16:27:17','Test comment.'),(5,5,2,'2016-09-28 16:33:43','I liked the responses, but I detected another possible mistake. What if when you\'re composing a post, you put <code> but you forget the closing tag </code>?'),(6,5,1,'2016-09-28 16:35:08','<3');
+INSERT INTO `tbl_comment` VALUES (1,2,1,'2016-09-27 17:11:38',':v');
 /*!40000 ALTER TABLE `tbl_comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +197,7 @@ CREATE TABLE `tbl_post` (
   PRIMARY KEY (`post_id`),
   KEY `post_user_fk` (`user_id`),
   CONSTRAINT `post_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +206,7 @@ CREATE TABLE `tbl_post` (
 
 LOCK TABLES `tbl_post` WRITE;
 /*!40000 ALTER TABLE `tbl_post` DISABLE KEYS */;
-INSERT INTO `tbl_post` VALUES (1,1,'2016-09-27 17:09:32','Hitmark celebration post.','This is the <strong>first post</strong> after every test performed was successful. The following features have proved to be correct and totally functional:<br><br>\r\n<strong>\r\n- Sign up and login.<br>\r\n- Make a post.<br>\r\n- Make a comment.<br>\r\n- See a post.<br>\r\n- Edit a post.<br><br>\r\n</strong>\r\nNeat, right?'),(2,2,'2016-09-27 20:56:52','Problems with concatenation','In this piece of code:<br>\r\n<br>\r\n<code>\r\n<?= (strlen($post->content)>=160) ?<br>\r\n(substr(HtmlPurifier::process($post->content), 0, 160)) . \'...\'<br>\r\n: $post->content ?><br>\r\n</code>\r\n<br>\r\nI have a little problem with concatenating <strong>\"...\"</strong> to the result of <strong>substr()</strong>. This is driving me nuts because it doesn\'t work properly. It does the HTML purifying process, it does the substr(), but it does NOT append the \"...\" at the end.\r\n<br><br>\r\nAnd I\'m supposedly using that as an indicator that the post is going to be rather large.\r\n<br><br>\r\nEdit - edited by nimmos (admin)'),(3,5,'2016-09-28 16:34:47','Admin and user testing.','I\'m an author, which means I\'m an authenticated user that can make and edit its own posts.<br>\r\nBut I\'m not an admin.\r\n<br><br>\r\nEdit - edited by daniel.sanver to prove that I\'m the author.<br>\r\nEdit - edited by nimmos, I\'M THE ADMIN B*TCHES!!!');
+INSERT INTO `tbl_post` VALUES (1,1,'2016-09-27 17:09:32','Hitmark celebration post.','<p>This is the <strong>first post</strong> after every test performed was successful. The following features have proved to be correct and totally functional:<br /><br /> <strong> - Sign up and login.<br /> - Make a post.<br /> - Make a comment.<br /> - See a post.<br /> - Edit a post.<br /><br /> </strong> Neat, right?</p>');
 /*!40000 ALTER TABLE `tbl_post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -225,7 +225,7 @@ CREATE TABLE `tbl_user` (
   `authkey` char(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `name` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +234,7 @@ CREATE TABLE `tbl_user` (
 
 LOCK TABLES `tbl_user` WRITE;
 /*!40000 ALTER TABLE `tbl_user` DISABLE KEYS */;
-INSERT INTO `tbl_user` VALUES (1,'nimmos','nisanvera23@gmail.com','$2y$13$RU1b5BEx4Hfd/e0UMjXWKe9EQJmpSaB.4EInLu5yb2DE/Xvr51QU2','JpAyjgRoz-HTJmCHxlLaw83otUrWTYM-'),(2,'lucchi','lucia@correo.com','$2y$13$Zt.9orEKRg921P.8/s39COBB//eGBiZOc7mg15XxVwbkdKtpsdkly','3RVoSwbzCjvY2M1f_c5jsZ3DDS58lHS3'),(5,'daniel.sanver','alegandoinocencia@hotmail.com','$2y$13$XEoyrOqnqqP/Diqo7C6ZF.kKt6D666J4FdREAzU0YOXkEjZxjnLpy','VsJXoOIJIldDPxYMnb9jQ46i0hrC1WVG');
+INSERT INTO `tbl_user` VALUES (1,'nimmos','nisanvera23@gmail.com','$2y$13$RU1b5BEx4Hfd/e0UMjXWKe9EQJmpSaB.4EInLu5yb2DE/Xvr51QU2','JpAyjgRoz-HTJmCHxlLaw83otUrWTYM-'),(2,'lucchi','lucia@correo.com','$2y$13$Zt.9orEKRg921P.8/s39COBB//eGBiZOc7mg15XxVwbkdKtpsdkly','3RVoSwbzCjvY2M1f_c5jsZ3DDS58lHS3'),(5,'daniel.sanver','alegandoinocencia@hotmail.com','$2y$13$XEoyrOqnqqP/Diqo7C6ZF.kKt6D666J4FdREAzU0YOXkEjZxjnLpy','VsJXoOIJIldDPxYMnb9jQ46i0hrC1WVG'),(9,'mituna','mitunacaptor@gmail.com','$2y$13$mGXWOy7tYcZGdA/Oww6MvuE9BKoEmc8C/mjLWGETM3RTkUhPlw2H2','xyefClj0uE1nAqAhZP998l49jTzEDsIE');
 /*!40000 ALTER TABLE `tbl_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -247,4 +247,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-28 20:11:43
+-- Dump completed on 2016-09-29 12:10:31

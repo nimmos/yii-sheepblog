@@ -11,15 +11,24 @@ $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
+    
+    <?php if (Yii::$app->session->hasFlash('signupSuccess')): ?>
+    
+        <h1>Done!</h1>
+        
+        <p><strong>You have successfully signed up to the blog. Try login now.</strong></p>
+    
+    <?php else: ?>
 
-    <h1>Sign up...</h1>
+        <h1>Sign up...</h1>
 
-    <p>If you aren't a user yet, please go sign up to our blog.</p>
-    <p><?= Html::a('Sign up', ['/site/signup'], ['class' => 'btn btn-primary']) ?></p>
+        <p>If you aren't a user yet, please go sign up to our blog.</p>
+        <p><?= Html::a('Sign up', ['/site/signup'], ['class' => 'btn btn-primary']) ?></p>
 
-    <h1>...or <?= Html::encode($this->title) ?></h1>
-
-    <p>Please fill out the following fields to login:</p>
+        <h1>...or Login</h1>
+        <p>If you are already a member of this subtle community.</p>
+    
+    <?php endif; ?>
 
     <?php $form = ActiveForm::begin([
         'id' => 'login-form',
