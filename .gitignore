@@ -48,3 +48,6 @@ Temporary Items
 /nbproject/private/
 /nbproject/
 /data/resource-sql/auto/
+
+# Composer vendor folder
+/vendor
