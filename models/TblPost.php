@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use Yii;
+
 /**
  * This is the model class for table "tbl_post".
  *
@@ -10,6 +12,7 @@ namespace app\models;
  * @property string $time
  * @property string $title
  * @property string $content
+ * @property string $headerimage
  *
  * @property Comment[] $comments
  * @property User $user
@@ -41,6 +44,8 @@ class TblPost extends \yii\db\ActiveRecord
             // content rules
             ['content', 'required', 'message' => 'Don\'t you have anything to say? Write down something'],
             [['content'], 'string'],
+            // header rules
+            [['headerimage'], 'string', 'max' => 50],
         ];
     }
 
@@ -55,6 +60,7 @@ class TblPost extends \yii\db\ActiveRecord
             'time' => 'Time',
             'title' => 'Post title',
             'content' => 'Post content',
+            'headerimage' => 'Header Image',
         ];
     }
 
@@ -63,7 +69,7 @@ class TblPost extends \yii\db\ActiveRecord
      */
     public function getComments()
     {
-        return $this->hasMany(TblComment::className(), ['post_id' => 'post_id']);
+        return $this->hasMany(Comment::className(), ['post_id' => 'post_id']);
     }
 
     /**
@@ -71,7 +77,7 @@ class TblPost extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(TblUser::className(), ['user_id' => 'user_id']);
+        return $this->hasOne(User::className(), ['user_id' => 'user_id']);
     }
     
     /**
@@ -83,5 +89,15 @@ class TblPost extends \yii\db\ActiveRecord
     public static function getPostById($post_id = 1) {
         $post = TblPost::findOne($post_id);
         return $post;
+    }
+    
+    /**
+     * Gets the next id to the last inserted post.
+     * 
+     * @return type
+     */
+    public static function getNextPostId() {
+        $post = TblPost::find()->orderBy('time DESC')->limit(1)->one();
+        return $post->post_id + 1;
     }
 }

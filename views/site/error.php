@@ -15,7 +15,8 @@ $this->title = $name;
 
     <div class="alert alert-danger">
         <?= /*nl2br(Html::encode($message))*/ "" ?>
-        <?= var_dump($model->errors) ?>
+        <?= /*var_dump($model->errors)*/ "" ?>
+        <?= $model ?>
     </div>
 
     <p>

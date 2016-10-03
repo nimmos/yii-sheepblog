@@ -4,11 +4,22 @@ use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 
 use app\models\TblUser;
+use app\models\TblImage;
 
 $this->title = $post->title;
 $this->params['p'] = $post->post_id;
 $this->params['breadcrumbs'][] = $this->title;
+
+$image = TblImage::getRoute($post->post_id, $post->headerimage);
+$color = isset($post->headerimage) ? "white" : "black";
 ?>
+<style>
+    .jumbotron {
+        background: url(<?=$image?>) no-repeat center center;
+        background-size: cover;
+        color: <?=$color?>;
+    }    
+</style>
 <div>
     
     <!-- Post section -->

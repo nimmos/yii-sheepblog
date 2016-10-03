@@ -2,14 +2,19 @@
 
 namespace app\controllers;
 
-use Yii;
-
 // Models for the blog
-use app\models\TblUser;
-use app\models\TblPost;
-use app\models\TblComment;
 
-class PostController extends \yii\web\Controller
+use app\models\TblComment;
+use app\models\TblPost;
+use app\models\TblUser;
+use app\models\TblImage;
+use Yii;
+use yii\data\ActiveDataProvider;
+use yii\helpers\BaseFileHelper;
+use yii\web\Controller;
+use yii\web\UploadedFile;
+
+class PostController extends Controller
 {
     /**
      * Default index.
@@ -18,14 +23,15 @@ class PostController extends \yii\web\Controller
      */
     public function actionIndex()
     {
-        // Retrieve all posts
+        // Retrieve all posts in ActiveDataProvider
         // sorted from recent posts to older posts
-        $posts = TblPost::find()
-                ->orderBy('time DESC')
-                ->all();
+        $dataProvider = new ActiveDataProvider([
+            'query' => TblPost::find()->orderBy('time DESC'),
+            'pagination' => [ 'pageSize' => 3 ],
+        ]);
                         
         return $this->render('index', [
-            'posts' => $posts,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -67,15 +73,39 @@ class PostController extends \yii\web\Controller
      */
     public function actionPostCompose ()
     {
-        $model = new TblPost();
+        $post = new TblPost();
+        $image = new TblImage();
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate())
+        if ($post->load(Yii::$app->request->post()) && $post->validate())
         {
-            $model->user_id = Yii::$app->user->id;
-            if($model->save()) { return $this->goBack(); }
+            // Retrieves the uploaded image
+            $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
+                    
+            if (isset($image)) {
+                
+                $post->headerimage = "header." . TblImage::ORIGINAL
+                        . "." . $image->imageFile->extension;
+                
+                // Create the folder in which the image is going to be saved
+                // It uses the next id to the last post because post isn't saved yet
+                $post_id = TblPost::getNextPostId();
+                BaseFileHelper::createDirectory(TblImage::getFolderRoute($post_id));
+                // Set the complete route
+                $image->setRoute($post_id, $post->headerimage);
+                $image->saveImage();
+            }
+            
+            $post->user_id = Yii::$app->user->id;
+                        
+            if ($post->save())
+            {
+                return $this->goBack();
+            }
         }
+        
         return $this->render('post-compose', [
-            'model' => $model,
+            'post' => $post,
+            'image' => $image,
             'edit' => false
         ]);
     }
@@ -89,17 +119,17 @@ class PostController extends \yii\web\Controller
     public function actionEditPost ($p)
     {
         // Obtain the post to edit
-        $model = TblPost::getPostById($p);
+        $post = TblPost::getPostById($p);
                 
-        if ($model->load(Yii::$app->request->post())
-                && $model->validate()
-                && $model->save())
+        if ($post->load(Yii::$app->request->post())
+                && $post->validate()
+                && $post->save())
         {            
             return $this->redirect(['post/post', 'p' => $p]);
         }
         
         return $this->render('post-compose', [
-            'model' => $model,
+            'post' => $post,
             'edit' => true
         ]);
     }
@@ -114,10 +144,17 @@ class PostController extends \yii\web\Controller
     {
         $post = TblPost::findOne($p);
         if (isset($post)) {
+            
+            // Deleting images
+            BaseFileHelper::removeDirectory(TblImage::getFolderRoute($p));
+            
+            // Deleting comments
             $comments = TblComment::findAll(['post_id' => $p]);
             foreach($comments as $comment) {
                 $comment->delete();
             }
+            
+            // Deleting post
             $post->delete();
             return $this->goHome();
         }
