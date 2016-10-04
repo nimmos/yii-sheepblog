@@ -1,6 +1,7 @@
 <?php
 
 use app\models\TblUser;
+use app\models\TblImage;
 use yii\helpers\Html;
 use yii\widgets\ListView;
 
@@ -13,7 +14,6 @@ $this->title = 'Sheepblog';
         color: white;
         text-align: right;
     }
-    
 </style>
 <div class="site-index">
 
@@ -31,8 +31,7 @@ $this->title = 'Sheepblog';
         <?php if (!Yii::$app->user->isGuest): ?>
             <?= Html::a('Why don\'t we start by posting something',
                 ['/post/post-compose'],
-                ['class' => 'btn btn-primary btn-block',
-                'style' => 'word-wrap: break-word;']) // This does not work, see later
+                ['class' => 'btn btn-primary btn-block'])
             ?>
         <?php endif; ?>
 
@@ -57,6 +56,7 @@ $this->title = 'Sheepblog';
 		return $this->render('post-resume',[
                     'post' => $model,
                     'author' => TblUser::findUsernameById($model->user_id),
+                    'imagepath' => TblImage::getRoutePostImageFolder($model->post_id),
                 ]);
             },
             'pager' => [

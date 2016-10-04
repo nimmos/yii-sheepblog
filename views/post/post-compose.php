@@ -5,13 +5,12 @@ use yii\bootstrap\Html;
 use dosamigos\tinymce\TinyMce;
 
 $this->title = 'Post Compose';
-?>
 
-<script>
-tinymce.activeEditor.uploadImages(function(success) {
-    document.forms[0].submit();
-});
-</script>
+// This is for Responsive Filemanager
+session_start();
+$_SESSION["RF"]["subfolder"] = "images/post";
+
+?>
 
 <!-- Post composing view -->
 
@@ -36,23 +35,30 @@ tinymce.activeEditor.uploadImages(function(success) {
                     'plugins' => [
                         "advlist autolink lists link charmap print preview anchor",
                         "searchreplace visualblocks code fullscreen",
-                        "insertdatetime table contextmenu paste"
+                        "insertdatetime table contextmenu paste image imagetools"
                     ],
-                    'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
-                    'paste_data_images' => true,
+                    'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image responsivefilemanager",
+                    
                     'file_browser_callback_types' => 'image',
                     'file_picker_types' => 'image',
-                    'images_upload_url' => '../../controllers/PostAcceptor.php',
-                    'images_upload_base_path' => '../../uploads/images/post/example/',
+                    
+                    // IMAGE UPLOAD
+                    'images_upload_url' => '/web/index.php?r=post/upload-image',
+                    'images_upload_base_path' => app\models\TblImage::UPLOADSROOT,
+                    
+                    // RESPONSIVE FILEMANAGER
+                    'external_filemanager_path' => '/vendor/filemanager/',
+                    'external_plugins' => ['filemanager' => '/vendor/filemanager/plugin.min.js'],
+                    'filemanager_title' => 'Responsive Filemanager',
                 ]
-            ]);?>
-            
-            <?php if (!$edit): ?>
+            ]) ?>
             
             <!-- Upload an image -->
             
             <?= $form->field($image, 'imageFile')->fileInput() ?>
-
+            
+            <?php if (!$edit): ?>
+            
             <!-- Displays a 'publish' or 'edit + cancel' button
             depending on 'edit' mode -->
        
@@ -61,7 +67,9 @@ tinymce.activeEditor.uploadImages(function(success) {
                    'class' => 'btn btn-primary',
                    'name' => 'publish-button']) ?>
             </div>
+            
             <?php else: ?>
+            
             <div class = "form-group">
                 <?= Html::submitButton('Edit post', [
                 'class' => 'btn btn-warning',

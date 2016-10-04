@@ -51,8 +51,9 @@ Temporary Items
 /nbproject/private/
 /nbproject/
 /data/resource-sql/auto/
-/migrations/
 /uploads/
 
-# Composer vendor folder
-/vendor
+# Composer vendor folder (and exceptions)
+/vendor/**
+!/vendor/filemanager/config/.gitkeep
+!/vendor/filemanager/config/config.php

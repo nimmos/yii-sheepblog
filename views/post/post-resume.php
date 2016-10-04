@@ -1,27 +1,50 @@
 <?php
 use yii\helpers\Html;
+use app\models\TblImage;
 
-// Content unformatting
-$data = strip_tags($post->content);
-$content = html_entity_decode($data, ENT_QUOTES, 'UTF-8');
+    // Content unformatting
+    $data = strip_tags($post->content);
+    $content = html_entity_decode($data, ENT_QUOTES, 'UTF-8');
 
-// Limits the entry to 160 characters
-if (strlen($content)>=160)
-{
-    $content = mb_substr($content, 0, 160, 'UTF-8') . '...';
-}
+    // Limits the entry to 160 characters
+    if (strlen($content)>=160)
+    {
+        $content = mb_substr($content, 0, 160, 'UTF-8') . '...';
+    }
+
+    // Establish jumbotron image
+    if (isset($post->headerimage)) {
+        $path = $imagepath . TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
+    } else {
+        $path = "20160831_065557.thumbnail.jpg";
+    }
 ?>
 
 <!-- View for each post resume -->
 
-<div>
-    <h3>
-        <?= Html::a(Html::encode($post->title),
-            ['/post/post', 'p' => $post->post_id])
-        ?>
-    </h3>
-    <p style="color:#ababab;">
-        <strong>Posted by: </strong><?= $author ?>
-    </p>
-    <p><?= $content ?><br></p>
+<style>
+    #container {height: 100%; width: 100%;}
+    #thumbnail, #content {display: inline-block; *display: inline; vertical-align: middle;}
+    #thumbnail {width: 15%;}
+    #thumbnail img {width: 90%;}
+    #content {width: 75%;}
+</style>
+
+<div id="container">
+
+    <div id="thumbnail">
+        <img src="<?=$path?>"/>
+    </div>
+    
+    <div id="content">
+        <h3>
+            <?= Html::a(Html::encode($post->title),
+                ['/post/post', 'p' => $post->post_id])
+            ?>
+        </h3>
+        <p style="color:#ababab;">
+            <strong>Posted by: </strong><?= $author ?>
+        </p>
+        <p><?= $content ?><br></p>
+    </div>
 </div>

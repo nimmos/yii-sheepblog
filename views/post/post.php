@@ -10,14 +10,25 @@ $this->title = $post->title;
 $this->params['p'] = $post->post_id;
 $this->params['breadcrumbs'][] = $this->title;
 
-$image = TblImage::getRoute($post->post_id, $post->headerimage);
-$color = isset($post->headerimage) ? "white" : "black";
+// Establish jumbotron image
+if (isset($post->headerimage)) {
+    $path = TblImage::getRoutePostImageFolder($post->post_id)
+            . TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
+    $image = "background: url($path) no-repeat center center;";
+    $color = "color: white;";
+} else {
+    $image = "";
+    $color = "color: black;";
+}
 ?>
+
+<!-- View for post -->
+
 <style>
     .jumbotron {
-        background: url(<?=$image?>) no-repeat center center;
+        <?=$color?>
+        <?=$image?>
         background-size: cover;
-        color: <?=$color?>;
     }    
 </style>
 <div>

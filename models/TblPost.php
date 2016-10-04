@@ -86,18 +86,38 @@ class TblPost extends \yii\db\ActiveRecord
      * @param type $post_id
      * @return type
      */
-    public static function getPostById($post_id = 1) {
+    public static function getPostById($post_id = 1)
+    {
         $post = TblPost::findOne($post_id);
         return $post;
     }
     
-    /**
-     * Gets the next id to the last inserted post.
-     * 
-     * @return type
-     */
-    public static function getNextPostId() {
-        $post = TblPost::find()->orderBy('time DESC')->limit(1)->one();
-        return $post->post_id + 1;
+    ////////////////////////////////////////////////
+    // These methods are used for hiding
+    // complete arrays of posts
+    // JUST FOR TESTING PURPOSES
+    // THEY'RE NOT IN USE YET
+    ////////////////////////////////////////////////
+    
+    public static function getAllUserPostIds()
+    {
+        $array = TblPost::findAll([
+            'user_id' => Yii::$app->user->id,
+        ]);
+        foreach ($array as $post) {
+            $posts[] = $post->post_id;
+        }
+        return $posts;
+    }
+    
+    public static function getAllOtherUsersPostIds()
+    {
+        $array = TblPost::find()->where([ 'not', [
+            'user_id' => Yii::$app->user->id,
+        ]])->all();
+        foreach ($array as $post) {
+            $posts[] = $post->post_id;
+        }
+        return $posts;
     }
 }
