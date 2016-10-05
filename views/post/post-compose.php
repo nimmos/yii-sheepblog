@@ -1,14 +1,22 @@
 <?php
+
+use app\models\TblImage;
+use dosamigos\tinymce\TinyMce;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
 
-use dosamigos\tinymce\TinyMce;
+    $this->title = 'Post Compose';
 
-$this->title = 'Post Compose';
-
-// This is for Responsive Filemanager
-session_start();
-$_SESSION["RF"]["subfolder"] = "images/post";
+    // This is for Responsive Filemanager
+    
+    // Checks if the user is an admin and establishes root folder
+    session_start();
+    if(Yii::$app->user->can('updatePost'))
+    {
+        $_SESSION["RF"]["subfolder"] = "";
+    } else {
+        $_SESSION["RF"]["subfolder"] = Yii::$app->user->id . "/images/post";
+    }
 
 ?>
 
@@ -19,7 +27,7 @@ $_SESSION["RF"]["subfolder"] = "images/post";
     <p>State your business, your doubts, your relevant info, your word.</p>
 </div>
 <div class = "row">
-   <div class = "col-lg-8">
+   <div class = "col-lg-12">
        
         <?php $form = ActiveForm::begin(['id' => 'post-compose-form']); ?>
        
@@ -44,7 +52,7 @@ $_SESSION["RF"]["subfolder"] = "images/post";
                     
                     // IMAGE UPLOAD
                     'images_upload_url' => '/web/index.php?r=post/upload-image',
-                    'images_upload_base_path' => app\models\TblImage::UPLOADSROOT,
+                    'images_upload_base_path' => TblImage::UPLOADSROOT,
                     
                     // RESPONSIVE FILEMANAGER
                     'external_filemanager_path' => '/vendor/filemanager/',

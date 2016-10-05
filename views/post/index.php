@@ -14,6 +14,9 @@ $this->title = 'Sheepblog';
         color: white;
         text-align: right;
     }
+    li {
+        border-radius: 6px;
+    }
 </style>
 <div class="site-index">
 
@@ -35,6 +38,8 @@ $this->title = 'Sheepblog';
             ?>
         <?php endif; ?>
 
+        <!-- Testing slick gallery -->
+        <?= $this->render('slickgallery', ['content' => 'slickexample']) ?>
     </div>
     
     <!-- Show recent entries -->
@@ -42,7 +47,7 @@ $this->title = 'Sheepblog';
     <div class="body-content">
         
         <?= ListView::widget([
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $posts,
             'options' => [
                 'tag' => 'ul',
                 'class' => 'list-group',
@@ -56,7 +61,7 @@ $this->title = 'Sheepblog';
 		return $this->render('post-resume',[
                     'post' => $model,
                     'author' => TblUser::findUsernameById($model->user_id),
-                    'imagepath' => TblImage::getRoutePostImageFolder($model->post_id),
+                    'imagepath' => TblImage::getRoutePostImageFolder($model->user_id, $model->post_id),
                 ]);
             },
             'pager' => [
@@ -71,3 +76,4 @@ $this->title = 'Sheepblog';
 
     </div>
 </div>
+

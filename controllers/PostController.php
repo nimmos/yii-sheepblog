@@ -13,7 +13,6 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\BaseFileHelper;
 use yii\web\Controller;
 use yii\web\UploadedFile;
-use yii\imagine\Image;
 
 class PostController extends Controller
 {
@@ -23,16 +22,17 @@ class PostController extends Controller
      * @return type
      */
     public function actionIndex()
-    {        
+    {
+        
         // Retrieve all posts in ActiveDataProvider
         // sorted from recent posts to older posts
-        $dataProvider = new ActiveDataProvider([
+        $posts = new ActiveDataProvider([
             'query' => TblPost::find()->orderBy('time DESC'),
             'pagination' => [ 'pageSize' => 3 ],
         ]);
                         
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'posts' => $posts,
         ]);
     }
 
@@ -48,7 +48,16 @@ class PostController extends Controller
         // Obtain the required post by its id
         $post = TblPost::getPostById($p);
         
-        // Publish new comments
+        // Obtain the comments of the post
+        $comments = new ActiveDataProvider([
+            'query' => TblComment::find()
+                ->where(['post_id' => $p]),
+        ]);
+        
+        // Obtain author of the post
+        $author = TblUser::findUsernameById($post->user_id);
+        
+        // Publish new comment if POST retrieves one
         $comment = new TblComment();
         if ($comment->load(Yii::$app->request->post()) && $comment->validate())
         {
@@ -60,10 +69,8 @@ class PostController extends Controller
             }
         }
         
-        return $this->render('post', [
-            'post' => $post, 'comment' => $comment,
-            'author' => TblUser::findUsernameById($post->user_id),
-            'comments' => TblComment::findAll(['post_id' => $p]),
+        return $this->render('post', [ 'post' => $post, 'author' => $author,
+            'comment' => $comment, 'comments' => $comments,
         ]);
     }
 
@@ -86,29 +93,7 @@ class PostController extends Controller
                     
             if (isset($image->imageFile)) {
                 
-                // Save the extension
-                $post->headerimage = "." . $image->imageFile->extension;
-                
-                // Save post in db
-                $post->save();
-                
-                // Image name
-                $imagename = TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
-                
-                // Create the folder in which the image will be saved, and set route
-                $directory = '../' . TblImage::getRoutePostImageFolder($post->post_id);
-                BaseFileHelper::createDirectory($directory);
-                $image->imageRoute = $directory . $imagename;
-                                
-                // Save image in directory
-                $image->saveImage();
-                
-                // Thumbnail image name
-                $imagename = TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
-                
-                // Create and save the thumbnail
-                Image::thumbnail($image->imageRoute, 90, 90)
-                    ->save(($directory . $imagename), ['quality' => 50]);
+                TblPost::savePost($post, $image);
                 
             } else {
                 $post->save();
@@ -124,62 +109,6 @@ class PostController extends Controller
         ]);
     }
     
-    /**
-     * Image upload handler
-     * NOTE: IS THIS NECESSARY? REVIEW LATER
-     * 
-     * @return type
-     */
-    public function actionUploadImage () {
-        
-        $accepted_origins = array("http://localhost", "http://192.168.1.1", "http://example.com");
-        
-        $imageFolder = TblImage::UPLOADSROOT . '/' . Yii::$app->user->identity->user_id . '/';
-        
-        reset ($_FILES);
-        $temp = current($_FILES);
-        
-        if (is_uploaded_file($temp['tmp_name'])){
-            
-            if (isset($_SERVER['HTTP_ORIGIN'])) {
-                // same-origin requests won't set an origin. If the origin is set, it must be valid.
-                if (in_array($_SERVER['HTTP_ORIGIN'], $accepted_origins)) {
-                  header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-                } else {
-                  header("HTTP/1.0 403 Origin Denied");
-                  return;
-                }
-            }
-
-            // Cookies
-            // header('Access-Control-Allow-Credentials: true');
-            // header('P3P: CP="There is no P3P policy."');
-
-            // Sanitize input
-            if (preg_match("/([^\w\s\d\-_~,;:\[\]\(\).])|([\.]{2,})/", $temp['name'])) {
-                header("HTTP/1.0 500 Invalid file name.");
-                return;
-            }
-
-            // Verify extension
-            if (!in_array(strtolower(pathinfo($temp['name'], PATHINFO_EXTENSION)), array("jpg", "png"))) {
-                header("HTTP/1.0 500 Invalid extension.");
-                return;
-            }
-
-            // Accept upload if there was no origin, or if it is an accepted origin
-            $filetowrite = $imageFolder . $temp['name'];
-            move_uploaded_file($temp['tmp_name'], $filetowrite);
-
-            // Respond to the successful upload with JSON
-            echo json_encode(array('location' => $filetowrite));
-          
-        } else {
-            // Notify editor that the upload failed
-            header("HTTP/1.0 500 Server Error");
-        }
-    }
-
     /**
      * Edits a specified post
      * 
@@ -199,29 +128,7 @@ class PostController extends Controller
                     
             if (isset($image->imageFile)) {
                 
-                // Save the extension
-                $post->headerimage = "." . $image->imageFile->extension;
-                
-                // Save post in db
-                $post->save();
-                
-                // Image name
-                $imagename = TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
-                
-                // Create the folder in which the image will be saved, and set route
-                $directory = '../' . TblImage::getRoutePostImageFolder($post->post_id);
-                BaseFileHelper::createDirectory($directory);
-                $image->imageRoute = $directory . $imagename;
-                                
-                // Save image in directory
-                $image->saveImage();
-                
-                // Thumbnail image name
-                $imagename = TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
-                
-                // Create and save the thumbnail
-                Image::thumbnail($image->imageRoute, 90, 90)
-                    ->save(($directory . $imagename), ['quality' => 50]);
+                TblPost::savePost($post, $image);
                 
             } else {
                 $post->save();
@@ -250,7 +157,7 @@ class PostController extends Controller
             
             // Deleting images of the post
             BaseFileHelper::removeDirectory(
-                '../' . TblImage::getRoutePostImageFolder($p));
+                '../' . TblImage::getRoutePostImageFolder($p->user_id, $p));
             
             // Deleting comments
             $comments = TblComment::findAll(['post_id' => $p]);

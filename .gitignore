@@ -50,8 +50,9 @@ Temporary Items
 
 /nbproject/private/
 /nbproject/
-/data/resource-sql/auto/
+/data/
 /uploads/
+/rfmthumbs/
 
 # Composer vendor folder (and exceptions)
 /vendor/**

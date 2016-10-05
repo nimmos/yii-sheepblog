@@ -53,7 +53,6 @@ use yii\helpers\Html;
             
             <?php endif; ?>
             
-            <br><br>
         </p>
     </div>
 </div>

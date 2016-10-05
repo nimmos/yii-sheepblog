@@ -7,13 +7,17 @@ use yii\base\Model;
 class TblImage extends Model {
     
     const UPLOADSROOT = '/uploads/';
+    const THUMBSROOT = '/thumbs/';
     const POSTROOT = 'images/post/';
     const USERROOT = 'images/user/';
     
     const HEADER = 'header';
     
     const ORIGINAL = '.original';
-    const THUMBNAIL = '.90x90';
+    const THUMBNAIL = '.thumbnail';
+    
+    const THUMBNAIL_W = 150;
+    const THUMBNAIL_H = 150;
 
     public $imageFile;
     public $imageRoute;
@@ -24,8 +28,8 @@ class TblImage extends Model {
     public function rules () {
         return [
             ['imageFile', 'image', 'extensions' => 'png, jpg',
-                'minWidth' => 100, //'maxWidth' => 1000,
-                'minHeight' => 100, //'maxHeight' => 1000,
+                //'minWidth' => THUMBNAIL_W, 'maxWidth' => 1000,
+                //'minHeight' => THUMBNAIL_H, 'maxHeight' => 1000,
             ],
         ];
     }
@@ -40,9 +44,19 @@ class TblImage extends Model {
         ];
     }
     
-    public static function getRoutePostImageFolder($post_id)
+    /**
+     * Generates the post image folder based on user_id and post_id
+     * 
+     * @param type $user_id
+     * @param type $post_id
+     * @return type
+     */
+    public static function getRoutePostImageFolder($user_id, $post_id)
     {
-        return TblImage::UPLOADSROOT . TblImage::POSTROOT . $post_id . '/';
+        return TblImage::UPLOADSROOT
+                . $user_id . '/'
+                . TblImage::POSTROOT
+                . $post_id . '/';
     }
     
     /**

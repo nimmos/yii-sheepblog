@@ -3,16 +3,19 @@ use yii\helpers\Html;
 use app\models\TblImage;
 
     // Content unformatting
+
     $data = strip_tags($post->content);
     $content = html_entity_decode($data, ENT_QUOTES, 'UTF-8');
 
     // Limits the entry to 160 characters
+    
     if (strlen($content)>=160)
     {
         $content = mb_substr($content, 0, 160, 'UTF-8') . '...';
     }
 
     // Establish jumbotron image
+    
     if (isset($post->headerimage)) {
         $path = $imagepath . TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
     } else {
@@ -23,11 +26,28 @@ use app\models\TblImage;
 <!-- View for each post resume -->
 
 <style>
-    #container {height: 100%; width: 100%;}
-    #thumbnail, #content {display: inline-block; *display: inline; vertical-align: middle;}
-    #thumbnail {width: 15%;}
-    #thumbnail img {width: 90%;}
-    #content {width: 75%;}
+    #container {
+        height: 100%; width: 100%;
+    }
+    
+    #thumbnail, #content {
+        display: inline-block;
+        *display: inline;
+        vertical-align: middle;
+    }
+    
+    #thumbnail {
+        width: 15%;
+    }
+    
+    #thumbnail img {
+        width: 90%;
+        border-radius: 100%;
+    }
+    
+    #content {
+        width: 75%;
+    }
 </style>
 
 <div id="container">

@@ -19,6 +19,11 @@ AppAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
+    
+    <!-- Adding slick -->
+    <link rel="stylesheet" type="text/css" href="../../vendor/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="../../vendor/slick/slick-theme.css"/>
+    
     <?php $this->head() ?>
 </head>
 <body>

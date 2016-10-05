@@ -2,6 +2,9 @@
 
 namespace app\models;
 
+use yii\helpers\BaseFileHelper;
+use yii\imagine\Image;
+
 use Yii;
 
 /**
@@ -92,32 +95,36 @@ class TblPost extends \yii\db\ActiveRecord
         return $post;
     }
     
-    ////////////////////////////////////////////////
-    // These methods are used for hiding
-    // complete arrays of posts
-    // JUST FOR TESTING PURPOSES
-    // THEY'RE NOT IN USE YET
-    ////////////////////////////////////////////////
-    
-    public static function getAllUserPostIds()
+    /**
+     * Saves a post and its header image in the database
+     * 
+     * @param type $post
+     * @param type $image
+     */
+    public static function savePost($post, $image)
     {
-        $array = TblPost::findAll([
-            'user_id' => Yii::$app->user->id,
-        ]);
-        foreach ($array as $post) {
-            $posts[] = $post->post_id;
-        }
-        return $posts;
-    }
-    
-    public static function getAllOtherUsersPostIds()
-    {
-        $array = TblPost::find()->where([ 'not', [
-            'user_id' => Yii::$app->user->id,
-        ]])->all();
-        foreach ($array as $post) {
-            $posts[] = $post->post_id;
-        }
-        return $posts;
+        // Save the extension
+        $post->headerimage = "." . $image->imageFile->extension;
+
+        // Save post in db
+        $post->save();
+
+        // Image name
+        $imagename = TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
+
+        // Create the folder in which the image will be saved, and set route
+        $directory = '../' . TblImage::getRoutePostImageFolder($post->user_id, $post->post_id);
+        BaseFileHelper::createDirectory($directory);
+        $image->imageRoute = $directory . $imagename;
+
+        // Save image in directory
+        $image->saveImage();
+
+        // Thumbnail image name
+        $imagename = TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
+
+        // Create and save the thumbnail
+        Image::thumbnail($image->imageRoute, TblImage::THUMBNAIL_W, TblImage::THUMBNAIL_W)
+            ->save(($directory . $imagename), ['quality' => 50]);
     }
 }

@@ -8,13 +8,13 @@ use yii\bootstrap\Html;
 <!-- Comment composing form -->
 
 <div class = "row">
-   <div class = "col-lg-5">
+   <div class = "col-lg-12">
         <?php $form = ActiveForm::begin(['id' => 'comment-compose-form']); ?>
 
             <!-- Comment editing (using TinyMCE extension) -->
        
             <?= $form->field($model, 'content')->widget(TinyMce::className(), [
-                'options' => ['rows' => 12],
+                'options' => ['rows' => 4],
                 //'language' => 'es',
                 'clientOptions' => [
                     'plugins' => [
