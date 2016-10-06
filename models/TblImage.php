@@ -84,4 +84,24 @@ class TblImage extends Model {
         } else { return false; }
     }
     
+    /**
+     * Searches for the "src=" attribute value from "img" tags
+     * and stores them in a return array
+     * 
+     * @param type $content
+     * @return type
+     */
+    public static function getImageRoutesFromContent ($content) {
+        
+        $pattern = '/src\="([^"]*)"/';
+        preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE);
+        foreach($matches[1] as $array) {
+            $result[] = $array[0];
+        }
+        
+        if(empty($result)) {
+            $result = array();
+        }
+        return $result;
+    }
 }

@@ -37,9 +37,6 @@ $this->title = 'Sheepblog';
                 ['class' => 'btn btn-primary btn-block'])
             ?>
         <?php endif; ?>
-
-        <!-- Testing slick gallery -->
-        <?= $this->render('slickgallery', ['content' => 'slickexample']) ?>
     </div>
     
     <!-- Show recent entries -->

@@ -9,6 +9,8 @@ use yii\bootstrap\Modal;
 use yii\helpers\Html;
 ?>
 
+<hr>
+
 <?php if (
     Yii::$app->user->can('updateOwnPost', ['user_id' => $user_id])
     || Yii::$app->user->can('updatePost')
@@ -54,4 +56,3 @@ use yii\helpers\Html;
     <?php Modal::end(); ?>
 
 <?php endif; ?>
-<hr>

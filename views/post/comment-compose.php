@@ -7,6 +7,8 @@ use yii\bootstrap\Html;
 
 <!-- Comment composing form -->
 
+<hr>
+
 <div class = "row">
    <div class = "col-lg-12">
         <?php $form = ActiveForm::begin(['id' => 'comment-compose-form']); ?>

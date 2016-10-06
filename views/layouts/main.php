@@ -21,8 +21,8 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     
     <!-- Adding slick -->
-    <link rel="stylesheet" type="text/css" href="../../vendor/slick/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="../../vendor/slick/slick-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
     
     <?php $this->head() ?>
 </head>

@@ -56,17 +56,27 @@ use yii\widgets\ListView;
         </p>
     </div>
     
-    <!-- If the user is an authenticated user -->
+    <!-- If user is authenticated: display post administration -->
     
     <?php if (!Yii::$app->user->isGuest): ?>
     
-        <!-- Display post administration -->
         <?= $this->render('post-admin', ['user_id' => $post->user_id])?>
     
-        <!-- Display comment form -->
+    <?php endif; ?>
+    
+    <!-- Gallery section -->
+    
+    <?= $this->render('slick-post', [
+            'images' => TblImage::getImageRoutesFromContent($post->content),
+    ]) ?>
+        
+    <!-- If user is authenticated: display comment form -->
+    
+    <?php if (!Yii::$app->user->isGuest): ?>
+    
         <?= $this->render('comment-compose', ['model' => $comment]) ?>
     
-    <!-- If the user is a guest, it can't comment and is encouraged to sign up -->
+    <!-- If user is gues: it can't comment and is encouraged to sign up -->
     
     <?php else: ?>
         <div style="color:#d60000;">
@@ -81,7 +91,7 @@ use yii\widgets\ListView;
             </p>
         </div>
     <?php endif; ?>
-    
+        
     <!-- Comment section-->
     
     <div>
