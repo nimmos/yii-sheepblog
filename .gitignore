@@ -55,7 +55,7 @@ Temporary Items
 /rfmthumbs/
 
 # Composer vendor folder (and exceptions)
-/vendor/**
+/vendor/
 !/vendor/.gitkeep
 !/vendor/filemanager/.gitkeep
 !/vendor/filemanager/config/.gitkeep

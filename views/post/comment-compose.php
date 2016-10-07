@@ -3,6 +3,16 @@
 use dosamigos\tinymce\TinyMce;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+
+    // This is for Responsive Filemanager:
+    // Checks if the user is an admin and establishes root folder for images
+    session_start();
+    if(Yii::$app->user->can('updatePost'))
+    {
+        $_SESSION["RF"]["subfolder"] = "";
+    } else {
+        $_SESSION["RF"]["subfolder"] = Yii::$app->user->id . "/images/post";
+    }
 ?>
 
 <!-- Comment composing form -->
@@ -17,14 +27,22 @@ use yii\bootstrap\Html;
        
             <?= $form->field($model, 'content')->widget(TinyMce::className(), [
                 'options' => ['rows' => 4],
-                //'language' => 'es',
                 'clientOptions' => [
                     'plugins' => [
                         "advlist autolink lists link charmap print preview anchor",
                         "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table contextmenu paste"
+                        "insertdatetime media table contextmenu paste image imagetools"
                     ],
-                    'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                    'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+                    
+                    // File type for the filemanager
+                    'file_browser_callback_types' => 'image',
+                    'file_picker_types' => 'image',
+                                        
+                    // Responsive Filemanager
+                    'external_filemanager_path' => '/vendor/filemanager/',
+                    'external_plugins' => ['filemanager' => '/vendor/filemanager/plugin.min.js'],
+                    'filemanager_title' => 'Responsive Filemanager',
                 ]
             ]);?>
 

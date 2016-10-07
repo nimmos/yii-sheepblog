@@ -1,15 +1,13 @@
 <?php
 
-use app\models\TblImage;
 use dosamigos\tinymce\TinyMce;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
 
     $this->title = 'Post Compose';
 
-    // This is for Responsive Filemanager
-    
-    // Checks if the user is an admin and establishes root folder
+    // This is for Responsive Filemanager:
+    // Checks if the user is an admin and establishes root folder for images
     session_start();
     if(Yii::$app->user->can('updatePost'))
     {
@@ -47,14 +45,11 @@ use yii\bootstrap\Html;
                     ],
                     'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image responsivefilemanager",
                     
+                    // File type for the filemanager
                     'file_browser_callback_types' => 'image',
                     'file_picker_types' => 'image',
-                    
-                    // IMAGE UPLOAD
-                    'images_upload_url' => '/web/index.php?r=post/upload-image',
-                    'images_upload_base_path' => TblImage::UPLOADSROOT,
-                    
-                    // RESPONSIVE FILEMANAGER
+                                        
+                    // Responsive Filemanager
                     'external_filemanager_path' => '/vendor/filemanager/',
                     'external_plugins' => ['filemanager' => '/vendor/filemanager/plugin.min.js'],
                     'filemanager_title' => 'Responsive Filemanager',

@@ -90,7 +90,7 @@ class PostController extends Controller
             
             // Retrieves the uploaded image
             $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
-                    
+            
             if (isset($image->imageFile)) {
                 
                 TblPost::savePost($post, $image);
@@ -155,9 +155,13 @@ class PostController extends Controller
         $post = TblPost::findOne($p);
         if (isset($post)) {
             
+            $directory = '../' . TblImage::getRoutePostImageFolder($post->user_id, $p);
+            
             // Deleting images of the post
-            BaseFileHelper::removeDirectory(
-                '../' . TblImage::getRoutePostImageFolder($p->user_id, $p));
+            if(file_exists($directory))
+            {
+                BaseFileHelper::removeDirectory($directory);
+            }
             
             // Deleting comments
             $comments = TblComment::findAll(['post_id' => $p]);
@@ -167,6 +171,7 @@ class PostController extends Controller
             
             // Deleting post
             $post->delete();
+            
             return $this->goHome();
         }
         return $this->goBack();

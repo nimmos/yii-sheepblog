@@ -19,7 +19,7 @@ use app\models\TblImage;
     if (isset($post->headerimage)) {
         $path = $imagepath . TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
     } else {
-        $path = "20160831_065557.thumbnail.jpg";
+        $path = "blogheader.thumbnail.jpg";
     }
 ?>
 
