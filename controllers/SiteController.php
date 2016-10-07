@@ -84,12 +84,19 @@ class SiteController extends Controller
             if ($model->validate() && $model->save())
             {
                 // Role assignment
-                // (Does this have to be here?)
                 $auth = Yii::$app->authManager;
                 $role = $auth->getRole('author');
                 $auth->assign($role,
                         TblUser::findIdByUsername($model->username)
                 );
+                
+                // Create user post images folder
+                $directory = '../' . \app\models\TblImage::UPLOADSROOT . $model->user_id . "/images/post";
+                if(!file_exists($directory))
+                {
+                    \yii\helpers\BaseFileHelper::createDirectory($directory);
+                }
+                
                 Yii::$app->session->setFlash('signupSuccess');
                 return $this->redirect(['site/login']);
             }
