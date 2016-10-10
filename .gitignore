@@ -47,12 +47,13 @@ Temporary Items
 .apdisk
 
 # Customized
-
 /nbproject/private/
 /nbproject/
 /data/
-/web/uploads/
-/web/rfmthumbs/
+/web/uploads/**
+!/web/uploads/.gitkeep
+/web/rfmthumbs/**
+!/web/rfmthumbs/.gitkeep
 
 # Composer vendor folder (and exceptions)
 /vendor/
