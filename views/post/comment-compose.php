@@ -39,8 +39,8 @@ use yii\bootstrap\Html;
                     'file_picker_types' => 'image',
                                         
                     // Responsive Filemanager
-                    'external_filemanager_path' => '/vendor/filemanager/',
-                    'external_plugins' => ['filemanager' => '/vendor/filemanager/plugin.min.js'],
+                    'external_filemanager_path' => '/extensions/filemanager/',
+                    'external_plugins' => ['filemanager' => '/extensions/filemanager/plugin.min.js'],
                     'filemanager_title' => 'Responsive Filemanager',
                 ]
             ]);?>
