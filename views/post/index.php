@@ -9,7 +9,7 @@ $this->title = 'Sheepblog';
 ?>
 <style>
     .jumbotron {
-        background: url(/web/blogheader.original.jpg) no-repeat;
+        background: url(/blogheader.original.jpg) no-repeat;
         background-size: cover;
         color: white;
         text-align: right;

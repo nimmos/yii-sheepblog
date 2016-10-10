@@ -1,15 +1,15 @@
 <?php
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 
 class TblImage extends Model {
     
-    const UPLOADSROOT = '/uploads/';
-    const THUMBSROOT = '/thumbs/';
-    const POSTROOT = 'images/post/';
-    const USERROOT = 'images/user/';
+    const UPLOADSROOT = 'uploads/';
+    const THUMBSROOT = 'rfmthumbs/';
+    
+    const POSTROOT = '/images/post/';
+    const USERROOT = '/images/user/';
     
     const HEADER = 'header';
     
@@ -45,7 +45,8 @@ class TblImage extends Model {
     }
     
     /**
-     * Generates the post image folder based on user_id and post_id
+     * Generates the route for the post image folder
+     * based on user_id and post_id
      * 
      * @param type $user_id
      * @param type $post_id
@@ -60,15 +61,19 @@ class TblImage extends Model {
     }
     
     /**
-     * Gets the complete path of the imageFile.
+     * Generates the route for the post thumbnail folder
+     * based on user_id and post_id
      * 
-     * @param type $path
-     * @param type $imagename
+     * @param type $user_id
+     * @param type $post_id
      * @return type
      */
-    public static function getRoute($path, $imagename)
+    public static function getRoutePostRFMThumbFolder($user_id, $post_id)
     {
-        return $path . $imagename;
+        return TblImage::THUMBSROOT
+                . $user_id . '/'
+                . TblImage::POSTROOT
+                . $post_id . '/';
     }
     
     /**

@@ -155,21 +155,27 @@ class PostController extends Controller
         $post = TblPost::findOne($p);
         if (isset($post)) {
             
-            $directory = '../' . TblImage::getRoutePostImageFolder($post->user_id, $p);
-            
-            // Deleting images of the post
+            // Delete images of the post
+            $directory = TblImage::getRoutePostImageFolder($post->user_id, $p);
             if(file_exists($directory))
             {
                 BaseFileHelper::removeDirectory($directory);
             }
             
-            // Deleting comments
+            // Delete thumbnails of Responsive Filemanager
+            $directory = TblImage::getRoutePostRFMThumbFolder($post->user_id, $p);
+            if(file_exists($directory))
+            {
+                BaseFileHelper::removeDirectory($directory);
+            }
+            
+            // Delete comments
             $comments = TblComment::findAll(['post_id' => $p]);
             foreach($comments as $comment) {
                 $comment->delete();
             }
             
-            // Deleting post
+            // Delete post
             $post->delete();
             
             return $this->goHome();

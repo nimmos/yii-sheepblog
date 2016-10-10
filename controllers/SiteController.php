@@ -2,15 +2,17 @@
 
 namespace app\controllers;
 
+// Models for the blog forms
+
+use app\models\ContactForm;
+use app\models\LoginForm;
+use app\models\TblImage;
+use app\models\TblUser;
+
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
-
-// Models for the blog forms
-use app\models\LoginForm;
-use app\models\TblUser;
-use app\models\ContactForm;
+use yii\web\Controller;
 
 class SiteController extends Controller
 {
@@ -91,7 +93,9 @@ class SiteController extends Controller
                 );
                 
                 // Create user post images folder
-                $directory = '../' . \app\models\TblImage::UPLOADSROOT . $model->user_id . "/images/post";
+                $directory = TblImage::UPLOADSROOT
+                        . $model->user_id
+                        . TblImage::POSTROOT;
                 if(!file_exists($directory))
                 {
                     \yii\helpers\BaseFileHelper::createDirectory($directory);

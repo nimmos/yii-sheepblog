@@ -113,7 +113,7 @@ class TblPost extends \yii\db\ActiveRecord
         $imagename = TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
 
         // Create the folder in which the image will be saved, and set route
-        $directory = '../' . TblImage::getRoutePostImageFolder($post->user_id, $post->post_id);
+        $directory = TblImage::getRoutePostImageFolder($post->user_id, $post->post_id);
         
         if(!file_exists($directory))
         {
