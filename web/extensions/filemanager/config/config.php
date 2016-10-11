@@ -68,7 +68,7 @@ $config = array(
 	| with start and final /
 	|
 	*/
-	'upload_dir' => '/uploads/',
+	'upload_dir' => '/rfmimages/',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ $config = array(
 	| with final /
 	|
 	*/
-	'current_path' => '../../uploads/',
+	'current_path' => '../../rfmimages/',
 
 	/*
 	|--------------------------------------------------------------------------

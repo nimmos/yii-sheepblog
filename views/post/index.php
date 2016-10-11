@@ -58,7 +58,7 @@ $this->title = 'Sheepblog';
 		return $this->render('post-resume',[
                     'post' => $model,
                     'author' => TblUser::findUsernameById($model->user_id),
-                    'imagepath' => TblImage::getRoutePostImageFolder($model->user_id, $model->post_id),
+                    'imagepath' => TblImage::routePostHeaderDir($model->user_id, $model->post_id),
                 ]);
             },
             'pager' => [

@@ -8,12 +8,14 @@ use yii\bootstrap\Html;
 
     // This is for Responsive Filemanager:
     // Checks if the user is an admin and establishes root folder for images
-    session_start();
-    if(Yii::$app->user->can('updatePost'))
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    if($_SESSION["role"]=='admin')
     {
         $_SESSION["RF"]["subfolder"] = "";
     } else {
-        $_SESSION["RF"]["subfolder"] = Yii::$app->user->id . "/images/post";
+        $_SESSION["RF"]["subfolder"] = Yii::$app->user->id;
     }
 
 ?>

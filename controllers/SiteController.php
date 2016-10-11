@@ -12,7 +12,9 @@ use app\models\TblUser;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\BaseFileHelper;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -75,37 +77,68 @@ class SiteController extends Controller
      */
     public function actionSignup ()
     {
-        $model = new TblUser();
+        $user = new TblUser();
+        $image = new TblImage();
 
-        if ($model->load(Yii::$app->request->post()))
+        if ($user->load(Yii::$app->request->post()))
         {
             // Set security properties before performing save()
-            $model->setPassword($model->password);
-            $model->setAuthkey();
+            $user->setPassword($user->password);
+            $user->setAuthkey();
             
-            if ($model->validate() && $model->save())
+            // Retrieves the uploaded image
+            $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
+
+            if (isset($image->imageFile)) {
+                // Save the extension
+                $user->userimage = "." . $image->imageFile->extension;
+            }
+            
+            if ($user->validate() && $user->save())
             {
                 // Role assignment
                 $auth = Yii::$app->authManager;
                 $role = $auth->getRole('author');
-                $auth->assign($role,
-                        TblUser::findIdByUsername($model->username)
-                );
+                $auth->assign($role, $user->user_id);
                 
                 // Create user post images folder
                 $directory = TblImage::UPLOADSROOT
-                        . $model->user_id
+                        . $user->user_id
                         . TblImage::POSTROOT;
                 if(!file_exists($directory))
                 {
-                    \yii\helpers\BaseFileHelper::createDirectory($directory);
+                    BaseFileHelper::createDirectory($directory);
                 }
                 
+                // Sets success flash
                 Yii::$app->session->setFlash('signupSuccess');
-                return $this->redirect(['site/login']);
+                
+                if (isset($image->imageFile)) {
+
+                    // Image name
+                    $imagename = TblImage::PROFILE . TblImage::ORIGINAL . $user->userimage;
+
+                    // Image directory
+                    $directory = TblImage::routeUserImageDir($user->user_id);
+                    if(!file_exists($directory))
+                    {
+                        BaseFileHelper::createDirectory($directory);
+                    }
+
+                    // Image path
+                    $image->imageRoute = $directory . $imagename;
+
+                    // Save image in directory
+                    $image->saveImage();
+                }
             }
+            
+            return $this->redirect(['site/login']);
         }
-        return $this->render('signup', ['model' => $model]);
+        return $this->render('signup', [
+            'user' => $user,
+            'image' => $image,
+        ]);
     }
 
     /**

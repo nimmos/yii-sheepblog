@@ -7,13 +7,13 @@
 
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
+
 ?>
 
 <hr>
 
-<?php if (
+<?php if (Yii::$app->user->can('updatePost') ||
     Yii::$app->user->can('updateOwnPost', ['user_id' => $user_id])
-    || Yii::$app->user->can('updatePost')
 ): ?>
 
     <!-- Button for post editing -->
@@ -24,9 +24,8 @@ use yii\helpers\Html;
     )?>            
 <?php endif; ?>
 
-<?php if (
+<?php if (Yii::$app->user->can('deletePost') ||
     Yii::$app->user->can('deleteOwnPost', ['user_id' => $user_id])
-    || Yii::$app->user->can('deletePost')
 ): ?>
 
     <!-- Modal window for delete confirmation -->
@@ -46,7 +45,7 @@ use yii\helpers\Html;
         <div class="modal-footer">
             <?= Html::a('Delete', [
                     '/post/delete-post',
-                    'p' => $this->params['p']
+                    'p' => $this->params['p'],
                 ],
                 ['class' => 'btn btn-danger'])
             ?>

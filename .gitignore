@@ -51,9 +51,16 @@ Temporary Items
 /nbproject/
 /data/
 /web/uploads/**
-!/web/uploads/.gitkeep
 /web/rfmthumbs/**
+/web/rfmimages/**
+
+!/web/uploads/.gitkeep
+!/web/uploads/images/post/.gitkeep
+!/web/uploads/images/user/.gitkeep
+
 !/web/rfmthumbs/.gitkeep
+
+!/web/rfmimages/.gitkeep
 
 # Composer vendor folder (and exceptions)
 /vendor/

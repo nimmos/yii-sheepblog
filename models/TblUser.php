@@ -12,13 +12,13 @@ use Yii;
  * @property string $email
  * @property string $password
  * @property string $authkey
+ * @property string $userimage
  *
- * @property TblComment[] $tblComments
- * @property TblPost[] $tblPosts
+ * @property Comment[] $comments
+ * @property Post[] $posts
  */
 class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
-    
     /**
      * @inheritdoc
      */
@@ -48,6 +48,8 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             ['password', 'string', 'length' => [8, 80]],
             // authkey rules
             ['authkey', 'string', 'max' => 50],
+            // userimage rules (image extension)
+            ['userimage', 'string', 'max' => 5],
         ];
     }
 
@@ -61,23 +63,24 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'username' => 'Username',
             'email' => 'Email',
             'password' => 'Password',
+            'userimage' => 'User image',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblComments()
+    public function getComments()
     {
-        return $this->hasMany(TblComment::className(), ['user_id' => 'user_id']);
+        return $this->hasMany(Comment::className(), ['user_id' => 'user_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblPosts()
+    public function getPosts()
     {
-        return $this->hasMany(TblPost::className(), ['user_id' => 'user_id']);
+        return $this->hasMany(Post::className(), ['user_id' => 'user_id']);
     }
     
     ////////////////////////////////////////////////
@@ -164,10 +167,21 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     ////////////////////////////////////////////////
     
     /**
+     * This will find a user in the db based on its id.
+     * 
+     * @param int $user_id
+     * @return TblUser
+     */
+    public static function findById($user_id)
+    {
+        return self::findOne($user_id);
+    }
+    
+    /**
      * It finds a username based on its id.
      * 
-     * @param type $user_id
-     * @return type
+     * @param int $user_id
+     * @return string
      */
     public static function findUsernameById ($user_id)
     {
@@ -177,8 +191,8 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     /**
      * It finds an id based on the username.
      * 
-     * @param type $username
-     * @return type
+     * @param string $username
+     * @return int
      */
     public static function findIdByUsername ($username)
     {

@@ -19,11 +19,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]); ?>
 
-         <?= $form->field($model, 'username') ?>
-       
-         <?= $form->field($model, 'email')->input('email') ?>
-       
-         <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($user, 'username') ?>
+        
+        <?= $form->field($user, 'email')->input('email') ?>
+        
+        <?= $form->field($user, 'password')->passwordInput() ?>
+                    
+        <?= $form->field($image, 'imageFile')->fileInput() ?>
          
         <div class="col-lg-1 col-lg-offset-1">
             <div class = "form-group">

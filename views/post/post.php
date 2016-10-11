@@ -13,7 +13,7 @@ use yii\widgets\ListView;
     // Establish jumbotron image
     
     if (isset($post->headerimage)) {
-        $path = TblImage::getRoutePostImageFolder($post->user_id, $post->post_id)
+        $path = TblImage::routePostHeaderDir($post->user_id, $post->post_id)
                 . TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
         $image = "background: url($path) no-repeat center center;";
         $color = "color: white;";
@@ -67,7 +67,7 @@ use yii\widgets\ListView;
     <!-- Gallery section -->
     
     <?= $this->render('slick-post', [
-            'images' => TblImage::getImageRoutesFromContent($post->content),
+            'images' => TblImage::routesImageFromContent($post->content),
     ]) ?>
         
     <!-- If user is authenticated: display comment form -->

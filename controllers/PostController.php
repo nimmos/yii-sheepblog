@@ -16,6 +16,41 @@ use yii\web\UploadedFile;
 
 class PostController extends Controller
 {
+    
+    /**
+     * Yii2 executes this function before Controller initialization
+     */
+    public function init() {
+        
+        $role = Yii::$app->authManager->getRolesByUser(Yii::$app->user->id);
+        
+        // Store the user role in a $_SESSION variable
+        
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (!empty($role)) {
+            $_SESSION["role"] = current($role)->name;
+        } else {
+            $_SESSION["role"] = 'guest';
+        }
+        
+        // Layout assignment depending on user role
+        
+        switch ($_SESSION["role"]) {
+            case 'admin':
+            case 'author':
+                $this->layout = 'user';
+                break;
+            case 'guest':
+            default:
+                $this->layout = 'main';
+        }
+        
+        parent::init();
+    }
+    
     /**
      * Default index.
      * 
@@ -30,7 +65,7 @@ class PostController extends Controller
             'query' => TblPost::find()->orderBy('time DESC'),
             'pagination' => [ 'pageSize' => 3 ],
         ]);
-                        
+        
         return $this->render('index', [
             'posts' => $posts,
         ]);
@@ -155,18 +190,27 @@ class PostController extends Controller
         $post = TblPost::findOne($p);
         if (isset($post)) {
             
-            // Delete images of the post
-            $directory = TblImage::getRoutePostImageFolder($post->user_id, $p);
+            // Delete header and thumbnail of the post
+            $directory = TblImage::routePostHeaderDir($post->user_id, $p);
             if(file_exists($directory))
             {
                 BaseFileHelper::removeDirectory($directory);
             }
             
             // Delete thumbnails of Responsive Filemanager
-            $directory = TblImage::getRoutePostRFMThumbFolder($post->user_id, $p);
+            $directory = TblImage::routeRFMThumbDir($post->user_id, $p);
             if(file_exists($directory))
             {
                 BaseFileHelper::removeDirectory($directory);
+            }
+            
+            // Delete images of the post
+            $images = TblImage::routesImageFromContent($post->content, true);
+            if(!empty($images))
+            {
+                foreach($images as $imagelink) {
+                    unlink(str_replace('\\', '/', getcwd()) . '/' . $imagelink);
+                }
             }
             
             // Delete comments

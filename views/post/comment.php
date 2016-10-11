@@ -1,6 +1,8 @@
 <?php
+
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
+
 ?>
 
 <!-- Comment view, to be embedded into a post -->
@@ -18,9 +20,8 @@ use yii\helpers\Html;
             
             <!-- Checks if the user can delete comments -->
             
-            <?php if (
+            <?php if (Yii::$app->user->can('deleteComment') ||
                 Yii::$app->user->can('deleteOwnComment', ['user_id' => $comment->user_id])
-                || Yii::$app->user->can('deletePost')
             ): ?>
             
             <!-- Modal window for delete confirmation -->
