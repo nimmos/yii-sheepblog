@@ -6,7 +6,11 @@ use yii\helpers\Html;
 
     $this->title = "User profile";
     $this->params['breadcrumbs'][] = $this->title;
+    // Set return URL
+    Yii::$app->user->setReturnUrl(['/user/profile']);
 
+    // Retrieve user profile image
+    
     $user = TblUser::findById(Yii::$app->user->id);
     
     if(isset($user->userimage))
@@ -16,8 +20,7 @@ use yii\helpers\Html;
     } else {
         $image = "/blogheader.thumbnail.jpg";
     }
-    
-    
+        
 ?>
 
 <div class="user-profile">
@@ -27,6 +30,8 @@ use yii\helpers\Html;
     <img src="<?=$image?>" width="200" height="200"/>
     
     <p>[[Here be user profile configuration]]</p>
+    
+    <?= $this->render('../post/post-list', ['dataProvider' => $dataProvider])?>
     
 </div>
 

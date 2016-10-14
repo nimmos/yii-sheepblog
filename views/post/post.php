@@ -9,6 +9,8 @@ use yii\widgets\ListView;
     $this->title = $post->title;
     $this->params['p'] = $post->post_id;
     $this->params['breadcrumbs'][] = $this->title;
+    // Set return URL
+    Yii::$app->user->setReturnUrl(['/post/post', 'p' => $post->post_id]);
 
     // Establish jumbotron image
     
@@ -21,7 +23,7 @@ use yii\widgets\ListView;
         $image = "";
         $color = "color: black;";
     }
-
+    
 ?>
 
 <!-- View for post -->

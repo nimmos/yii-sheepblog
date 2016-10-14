@@ -2,12 +2,11 @@
 
 namespace app\controllers;
 
-// Models for the blog
 use app\models\TblComment;
 use app\models\TblImage;
 use app\models\TblPost;
 use app\models\TblUser;
-
+use Imagine\Gd\Imagine;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\BaseFileHelper;
@@ -134,7 +133,7 @@ class PostController extends Controller
                 $post->save();
             }
             
-            return $this->goBack();
+            return $this->redirect(['post/post', 'p' => $post->post_id]);
         }
         
         return $this->render('post-compose', [
@@ -152,10 +151,12 @@ class PostController extends Controller
      */
     public function actionEditPost ($p)
     {
-        // Obtain the post to edit (and its header image)
+        // Obtain the post to edit
         $post = TblPost::getPostById($p);
         $image = new TblImage();
 
+        // Update the post
+        
         if ($post->load(Yii::$app->request->post()) && $post->validate())
         {            
             // Retrieves the uploaded image
@@ -169,8 +170,20 @@ class PostController extends Controller
                 $post->save();
             }
             
-            return $this->redirect(['post/post', 'p' => $p]);
+            return $this->goBack();
         }
+        
+        // Obtain the image of the post
+        // THIS DOESN'T WORK YET
+        
+//        if (isset($post->headerimage)) {
+//            
+//            $path = TblImage::routePostHeaderDir($post->user_id, $post->post_id)
+//                    . TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
+//            
+//            $imagine = new Imagine();
+//            $image->imageFile = $imagine->open($path);
+//        }
         
         return $this->render('post-compose', [
             'post' => $post,
@@ -222,7 +235,7 @@ class PostController extends Controller
             // Delete post
             $post->delete();
             
-            return $this->goHome();
+            return $this->goBack();
         }
         return $this->goBack();
     }

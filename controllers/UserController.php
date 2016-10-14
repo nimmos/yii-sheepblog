@@ -2,14 +2,17 @@
 
 namespace app\controllers;
 
+use app\models\TblPost;
+
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 
 class UserController extends Controller
 {
     
     /**
-     * Yii2 executes this function before Controller initialization
+     * Yii2 executes this function before Controller initialization.
      */
     public function init() {
         
@@ -42,9 +45,28 @@ class UserController extends Controller
         parent::init();
     }
     
+    /**
+     * Displays the user profile page.
+     * 
+     * @return type
+     */
     public function actionProfile()
     {
-        return $this->render('profile');
+        $dataProvider = new ActiveDataProvider([
+            'query' => ($_SESSION["role"]=='admin') ? 
+                TblPost::find()
+                :
+                TblPost::find()
+                ->where(['user_id' => Yii::$app->user->id]),
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [ 'defaultOrder' => [ 'time' => SORT_DESC ] ],
+        ]);
+        
+        return $this->render('profile', [
+            'dataProvider' => $dataProvider
+        ]);
     }
 
 }

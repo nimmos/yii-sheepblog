@@ -60,7 +60,7 @@ class TblPost extends \yii\db\ActiveRecord
         return [
             'post_id' => 'Post ID',
             'user_id' => 'Author',
-            'time' => 'Time',
+            'time' => 'Created on',
             'title' => 'Post title',
             'content' => 'Post content',
             'headerimage' => 'Header Image',
