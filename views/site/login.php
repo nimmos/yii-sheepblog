@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model app\models\LoginForm */
+/* @var $user app\models\LoginForm */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
@@ -39,11 +39,11 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?= $form->field($user, 'username')->textInput(['autofocus' => true]) ?>
 
-        <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($user, 'password')->passwordInput() ?>
 
-        <?= $form->field($model, 'rememberMe')->checkbox([
+        <?= $form->field($user, 'rememberMe')->checkbox([
             'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
         ]) ?>
 

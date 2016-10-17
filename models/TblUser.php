@@ -3,6 +3,12 @@
 namespace app\models;
 
 use Yii;
+use yii\base\NotSupportedException;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
+use yii\helpers\BaseFileHelper;
+use yii\web\IdentityInterface;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "tbl_user".
@@ -17,14 +23,26 @@ use Yii;
  * @property Comment[] $comments
  * @property Post[] $posts
  */
-class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
+class TblUser extends ActiveRecord implements IdentityInterface
 {
+    // Scenarios
+    const SCN_SIGNUP = 'signup';
+    const SCN_UPDATE = 'update';
+    
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'tbl_user';
+    }
+    
+    public function scenarios()
+    {
+        return [
+            self::SCN_SIGNUP => ['user_id', 'username', 'email', 'password', 'authkey', 'userimage'],
+            self::SCN_UPDATE => ['username', 'email', 'password'],
+        ];
     }
 
     /**
@@ -68,7 +86,7 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getComments()
     {
@@ -76,7 +94,7 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPosts()
     {
@@ -94,7 +112,7 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new \yii\base\NotSupportedException();
+        throw new NotSupportedException();
     }
 
     public function getId()
@@ -197,5 +215,75 @@ class TblUser extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public static function findIdByUsername ($username)
     {
         return self::findOne(['username' => $username])->user_id;
+    }
+    
+    ////////////////////////////////////////////////
+    // Saving to the database
+    ////////////////////////////////////////////////
+    
+    /**
+     * Saves a user (and profile image) into the db.
+     * 
+     * @param type $user
+     * @param type $image
+     * @param type $isNew
+     */
+    public static function saveUser ($user, $image, $isNew = true)
+    {
+        // Set security properties before performing save()
+        if ($user->isAttributeChanged('password')) {
+            $user->setPassword($user->password);
+        }
+        if ($isNew) { $user->setAuthkey(); }
+
+        // Retrieves the uploaded image
+        $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
+
+        // Save the image extension
+        if (isset($image->imageFile)) {
+            $user->userimage = "." . $image->imageFile->extension;
+        }
+
+        if ($user->validate() && $user->save())
+        {
+            if ($isNew) {
+                // Role assignment
+                $auth = Yii::$app->authManager;
+                $role = $auth->getRole('author');
+                $auth->assign($role, $user->user_id);
+
+                // Create user post images folder
+                $directory = TblImage::UPLOADSROOT
+                        . $user->user_id
+                        . TblImage::POSTROOT;
+                if(!file_exists($directory))
+                {
+                    BaseFileHelper::createDirectory($directory);
+                }
+
+                // Sets success flash
+                Yii::$app->session->setFlash('signupSuccess');
+            }
+
+            // Saving profile image
+            if (isset($image->imageFile)) {
+
+                // Image name
+                $imagename = TblImage::PROFILE . TblImage::ORIGINAL . $user->userimage;
+
+                // Image directory
+                $directory = TblImage::routeUserImageDir($user->user_id);
+                if(!file_exists($directory))
+                {
+                    BaseFileHelper::createDirectory($directory);
+                }
+
+                // Image path
+                $image->imageRoute = $directory . $imagename;
+
+                // Save image in directory
+                $image->saveImage();
+            }
+        }
     }
 }

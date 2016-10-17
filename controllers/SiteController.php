@@ -12,9 +12,7 @@ use app\models\TblUser;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\BaseFileHelper;
 use yii\web\Controller;
-use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -79,62 +77,14 @@ class SiteController extends Controller
     {
         $user = new TblUser();
         $image = new TblImage();
+        $user->setScenario('signup');
 
         if ($user->load(Yii::$app->request->post()))
         {
-            // Set security properties before performing save()
-            $user->setPassword($user->password);
-            $user->setAuthkey();
-            
-            // Retrieves the uploaded image
-            $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
-
-            if (isset($image->imageFile)) {
-                // Save the extension
-                $user->userimage = "." . $image->imageFile->extension;
-            }
-            
-            if ($user->validate() && $user->save())
-            {
-                // Role assignment
-                $auth = Yii::$app->authManager;
-                $role = $auth->getRole('author');
-                $auth->assign($role, $user->user_id);
-                
-                // Create user post images folder
-                $directory = TblImage::UPLOADSROOT
-                        . $user->user_id
-                        . TblImage::POSTROOT;
-                if(!file_exists($directory))
-                {
-                    BaseFileHelper::createDirectory($directory);
-                }
-                
-                // Sets success flash
-                Yii::$app->session->setFlash('signupSuccess');
-                
-                if (isset($image->imageFile)) {
-
-                    // Image name
-                    $imagename = TblImage::PROFILE . TblImage::ORIGINAL . $user->userimage;
-
-                    // Image directory
-                    $directory = TblImage::routeUserImageDir($user->user_id);
-                    if(!file_exists($directory))
-                    {
-                        BaseFileHelper::createDirectory($directory);
-                    }
-
-                    // Image path
-                    $image->imageRoute = $directory . $imagename;
-
-                    // Save image in directory
-                    $image->saveImage();
-                }
-            }
-            
+            TblUser::saveUser($user, $image);
             return $this->redirect(['site/login']);
         }
+        
         return $this->render('signup', [
             'user' => $user,
             'image' => $image,
@@ -152,13 +102,13 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
+        $user = new LoginForm();
         
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        if ($user->load(Yii::$app->request->post()) && $user->login()) {
             return $this->goBack();
         }
         return $this->render('login', [
-            'model' => $model,
+            'user' => $user,
         ]);
     }
 
