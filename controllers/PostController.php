@@ -115,6 +115,11 @@ class PostController extends Controller
      */
     public function actionPostCompose ()
     {
+        
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
         $post = new TblPost();
         $image = new TblImage();
 
@@ -151,6 +156,11 @@ class PostController extends Controller
      */
     public function actionEditPost ($p)
     {
+        
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
         // Obtain the post to edit
         $post = TblPost::getPostById($p);
         $image = new TblImage();
@@ -200,6 +210,10 @@ class PostController extends Controller
      */
     public function actionDeletePost ($p)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
         $post = TblPost::findOne($p);
         if (isset($post)) {
             
@@ -249,6 +263,10 @@ class PostController extends Controller
      */
     public function actionDeleteComment ($c, $p)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
         $comment = TblComment::findOne($c);
         if (isset($comment)) {
             $comment->delete();

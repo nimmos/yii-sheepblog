@@ -81,7 +81,6 @@ use yii\helpers\Html;
                             '#',
                             [
                                 'class' => 'delete-button',
-                                'onclick' => 'delete(this)',
                                 'post_id' => $key,
                                 'title' => $data->title,
                             ]);
