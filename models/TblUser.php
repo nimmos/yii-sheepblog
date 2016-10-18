@@ -8,7 +8,6 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\BaseFileHelper;
 use yii\web\IdentityInterface;
-use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "tbl_user".
@@ -62,7 +61,7 @@ class TblUser extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             ['email', 'string', 'max' => 40],
             // password rules
-            ['password', 'required', 'message' => 'This is also required'],
+            ['password', 'required', 'message' => 'This is also required', 'on' => 'signup'],
             ['password', 'string', 'length' => [8, 80]],
             // authkey rules
             ['authkey', 'string', 'max' => 50],
@@ -222,68 +221,38 @@ class TblUser extends ActiveRecord implements IdentityInterface
     ////////////////////////////////////////////////
     
     /**
-     * Saves a user (and profile image) into the db.
+     * Saves a user into the db.
      * 
      * @param type $user
-     * @param type $image
      * @param type $isNew
      */
-    public static function saveUser ($user, $image, $isNew = true)
+    public static function saveUser ($user, $isNew)
     {
         // Set security properties before performing save()
+        
         if ($user->isAttributeChanged('password')) {
             $user->setPassword($user->password);
         }
         if ($isNew) { $user->setAuthkey(); }
-
-        // Retrieves the uploaded image
-        $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
-
-        // Save the image extension
-        if (isset($image->imageFile)) {
-            $user->userimage = "." . $image->imageFile->extension;
-        }
-
+        
+        // Save into the database
+        
         if ($user->validate() && $user->save())
         {
+            
+            // Role assignment
+            
             if ($isNew) {
-                // Role assignment
                 $auth = Yii::$app->authManager;
                 $role = $auth->getRole('author');
                 $auth->assign($role, $user->user_id);
-
-                // Create user post images folder
-                $directory = TblImage::UPLOADSROOT
-                        . $user->user_id
-                        . TblImage::POSTROOT;
-                if(!file_exists($directory))
-                {
-                    BaseFileHelper::createDirectory($directory);
-                }
-
-                // Sets success flash
-                Yii::$app->session->setFlash('signupSuccess');
             }
 
-            // Saving profile image
-            if (isset($image->imageFile)) {
-
-                // Image name
-                $imagename = TblImage::PROFILE . TblImage::ORIGINAL . $user->userimage;
-
-                // Image directory
-                $directory = TblImage::routeUserImageDir($user->user_id);
-                if(!file_exists($directory))
-                {
-                    BaseFileHelper::createDirectory($directory);
-                }
-
-                // Image path
-                $image->imageRoute = $directory . $imagename;
-
-                // Save image in directory
-                $image->saveImage();
-            }
-        }
+            // Sets success flash
+            
+            Yii::$app->session->setFlash('signupSuccess');
+            
+            return true;
+        } else { return false; }
     }
 }

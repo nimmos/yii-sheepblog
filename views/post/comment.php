@@ -43,7 +43,6 @@ use yii\helpers\Html;
                     <?= Html::a('Delete', [
                             '/post/delete-comment',
                             'c' => $comment->comment_id,
-                            'p' => $this->params['p']
                         ],
                         ['class' => 'btn btn-danger'])
                     ?>

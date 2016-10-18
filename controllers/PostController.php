@@ -60,6 +60,7 @@ class PostController extends Controller
         
         // Retrieve all posts in ActiveDataProvider
         // sorted from recent posts to older posts
+        
         $posts = new ActiveDataProvider([
             'query' => TblPost::find()->orderBy('time DESC'),
             'pagination' => [ 'pageSize' => 3 ],
@@ -80,18 +81,22 @@ class PostController extends Controller
     {
         
         // Obtain the required post by its id
+        
         $post = TblPost::getPostById($p);
         
         // Obtain the comments of the post
+        
         $comments = new ActiveDataProvider([
             'query' => TblComment::find()
                 ->where(['post_id' => $p]),
         ]);
         
         // Obtain author of the post
+        
         $author = TblUser::findUsernameById($post->user_id);
         
         // Publish new comment if POST retrieves one
+        
         $comment = new TblComment();
         if ($comment->load(Yii::$app->request->post()) && $comment->validate())
         {
@@ -128,7 +133,10 @@ class PostController extends Controller
             $post->user_id = Yii::$app->user->id;
             
             // Retrieves the uploaded image
+            
             $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
+            
+            // If there's an image, save it
             
             if (isset($image->imageFile)) {
                 
@@ -162,14 +170,15 @@ class PostController extends Controller
         }
         
         // Obtain the post to edit
+        
         $post = TblPost::getPostById($p);
         $image = new TblImage();
 
         // Update the post
         
         if ($post->load(Yii::$app->request->post()) && $post->validate())
-        {            
-            // Retrieves the uploaded image
+        {
+            
             $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
                     
             if (isset($image->imageFile)) {
@@ -215,38 +224,40 @@ class PostController extends Controller
         }
         
         $post = TblPost::findOne($p);
+        
         if (isset($post)) {
             
-            // Delete header and thumbnail of the post
-            $directory = TblImage::routePostHeaderDir($post->user_id, $p);
-            if(file_exists($directory))
-            {
-                BaseFileHelper::removeDirectory($directory);
-            }
+            // Delete folder for header and thumbnail of the post
             
-            // Delete thumbnails of Responsive Filemanager
-            $directory = TblImage::routeRFMThumbDir($post->user_id, $p);
+            $directory = TblImage::routePostHeaderDir($post->user_id, $p);
+            
             if(file_exists($directory))
             {
                 BaseFileHelper::removeDirectory($directory);
             }
             
             // Delete images of the post
+            
             $images = TblImage::routesImageFromContent($post->content, true);
             if(!empty($images))
             {
                 foreach($images as $imagelink) {
-                    unlink(str_replace('\\', '/', getcwd()) . '/' . $imagelink);
+                    $path = str_replace('\\', '/', getcwd()) . '/' . $imagelink;
+                    if(file_exists($path)) {
+                        unlink($path);
+                    }
                 }
             }
             
             // Delete comments
+            
             $comments = TblComment::findAll(['post_id' => $p]);
             foreach($comments as $comment) {
                 $comment->delete();
             }
             
             // Delete post
+            
             $post->delete();
             
             return $this->goBack();
@@ -261,7 +272,7 @@ class PostController extends Controller
      * @param type $p
      * @return type
      */
-    public function actionDeleteComment ($c, $p)
+    public function actionDeleteComment ($c)
     {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -270,8 +281,8 @@ class PostController extends Controller
         $comment = TblComment::findOne($c);
         if (isset($comment)) {
             $comment->delete();
-            return $this->redirect(['post/post', 'p' => $p]);
         }
+        
         return $this->goBack();
     }
 }

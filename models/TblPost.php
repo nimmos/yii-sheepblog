@@ -2,11 +2,6 @@
 
 namespace app\models;
 
-use yii\helpers\BaseFileHelper;
-use yii\imagine\Image;
-
-use Yii;
-
 /**
  * This is the model class for table "tbl_post".
  *
@@ -109,28 +104,7 @@ class TblPost extends \yii\db\ActiveRecord
         // Save post in db
         $post->save();
 
-        // Image name
-        $imagename = TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
-
-        // Create the folder in which the image will be saved, and set route
-        $directory = TblImage::routePostHeaderDir($post->user_id, $post->post_id);
-        
-        if(!file_exists($directory))
-        {
-            BaseFileHelper::createDirectory($directory);
-        }
-        
-        // Establish image path
-        $image->imageRoute = $directory . $imagename;
-
-        // Save image in directory
-        $image->saveImage();
-
-        // Thumbnail image name
-        $imagename = TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
-
-        // Create and save the thumbnail
-        Image::thumbnail($image->imageRoute, TblImage::THUMBNAIL_W, TblImage::THUMBNAIL_W)
-            ->save(($directory . $imagename), ['quality' => 50]);
+        // Save image in db
+        $image->saveHeaderImage($post);
     }
 }

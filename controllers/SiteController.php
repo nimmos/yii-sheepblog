@@ -4,15 +4,17 @@ namespace app\controllers;
 
 // Models for the blog forms
 
+
 use app\models\ContactForm;
 use app\models\LoginForm;
 use app\models\TblImage;
 use app\models\TblUser;
-
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\BaseFileHelper;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -81,7 +83,38 @@ class SiteController extends Controller
 
         if ($user->load(Yii::$app->request->post()))
         {
-            TblUser::saveUser($user, $image);
+            
+            // Retrieves the uploaded image
+            $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
+            
+            // Save the image extension
+            
+            if (isset($image->imageFile)) {
+                $user->userimage = "." . $image->imageFile->extension;
+            }
+            
+            // Save user data (and profile image if everything went well)
+            
+            if (TblUser::saveUser($user, true) && isset($image->imageFile))
+            {
+                // Create user images directories
+            
+                $directory[] = TblImage::routeUserImageDir($user->user_id);
+                $directory[] = TblImage::routeRFMImageDir($user->user_id);
+                $directory[] = TblImage::routeRFMThumbDir($user->user_id);
+                
+                foreach( $directory as $current )
+                {
+                    if(!file_exists($current))
+                    {
+                        BaseFileHelper::createDirectory($current);
+                    }
+                }
+                
+                // Save user profile image
+                $image->saveProfileImage($user);
+            }
+            
             return $this->redirect(['site/login']);
         }
         
