@@ -20,12 +20,15 @@ use yii\bootstrap\Html;
 
 ?>
 
-<!-- Post composing view -->
+<!-- Post composing info -->
 
 <div>
     <h2>Post composing</h2>
     <p>State your business, your doubts, your relevant info, your word.</p>
 </div>
+
+<!-- Post composing form -->
+
 <div class = "row">
    <div class = "col-lg-12">
        

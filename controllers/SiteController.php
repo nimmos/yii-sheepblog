@@ -95,24 +95,29 @@ class SiteController extends Controller
             
             // Save user data (and profile image if everything went well)
             
-            if (TblUser::saveUser($user, true) && isset($image->imageFile))
+            if (TblUser::saveUser($user, true))
             {
+                // Sets success flash
+                Yii::$app->session->setFlash('signupSuccess');
+                
                 // Create user images directories
             
-                $directory[] = TblImage::routeUserImageDir($user->user_id);
-                $directory[] = TblImage::routeRFMImageDir($user->user_id);
-                $directory[] = TblImage::routeRFMThumbDir($user->user_id);
+                $paths[] = TblImage::pathGenerator($user->user_id, TblImage::PATH_USER);
+                $paths[] = TblImage::pathGenerator($user->user_id, TblImage::ROOT_RFM_IMG);
+                $paths[] = TblImage::pathGenerator($user->user_id, TblImage::ROOT_RFM_THUMB);
                 
-                foreach( $directory as $current )
+                foreach( $paths as $path )
                 {
-                    if(!file_exists($current))
+                    if(!file_exists($path))
                     {
-                        BaseFileHelper::createDirectory($current);
+                        BaseFileHelper::createDirectory($path);
                     }
                 }
                 
                 // Save user profile image
-                $image->saveProfileImage($user);
+                if (isset($image->imageFile)) {
+                    $image->saveProfileImage($user);
+                }
             }
             
             return $this->redirect(['site/login']);

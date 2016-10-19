@@ -80,10 +80,9 @@ class UserController extends Controller
         
         if(isset($user->userimage))
         {
-            $directory = TblImage::routeUserImageDir($user->user_id);
-            $image = $directory . TblImage::PROFILE . TblImage::ORIGINAL . $user->userimage;
+            $imagepath = TblImage::pathGenerator($user->user_id, TblImage::PROFILE, $user->userimage);
         } else {
-            $image = "/blogheader.thumbnail.jpg";
+            $imagepath = TblImage::TEMP_THUMB;
         }
         
         // Retrieve user post list
@@ -124,9 +123,9 @@ class UserController extends Controller
             return $this->refresh();
         }
         
-        return $this->render('profile', [
+        return $this->render('user-profile', [
             'user' => $user,
-            'image' => $image,
+            'imagepath' => $imagepath,
             'newimage' => $newimage,
             'dataProvider' => $dataProvider,
         ]);
@@ -142,13 +141,14 @@ class UserController extends Controller
         
         $user_id = Yii::$app->user->id;
         
-        // Delete user commentaries
+        // Delete user comments
         
         $comments = TblComment::findAll(['user_id' => $user_id]);
         
         if (isset($comments)) {
             foreach($comments as $comment) {
-                $comment->delete();
+                Yii::$app->runAction('/post/delete-comment',
+                    ['c' => $comment->comment_id]);
             }
         }
         
@@ -158,21 +158,22 @@ class UserController extends Controller
         
         if (isset($posts)) {
             foreach($posts as $post) {
-                Yii::$app->runAction('/post/delete-post', ['p' => $post->post_id]);
+                Yii::$app->runAction('/post/delete-post',
+                    ['p' => $post->post_id]);
             }
         }
         
         // Delete image folders
         
-        $directory[] = TblImage::UPLOADSROOT . $user_id . '/';
-        $directory[] = TblImage::THUMBSROOT . $user_id . '/';
-        $directory[] = TblImage::IMAGESROOT . $user_id . '/';
+        $paths[] = TblImage::pathGenerator($user_id, TblImage::ROOT_UPLOAD);
+        $paths[] = TblImage::pathGenerator($user_id, TblImage::ROOT_RFM_THUMB);
+        $paths[] = TblImage::pathGenerator($user_id, TblImage::ROOT_RFM_IMG);
         
-        foreach( $directory as $current )
+        foreach( $paths as $path )
         {
-            if(file_exists($current))
+            if(file_exists($path))
             {
-                BaseFileHelper::removeDirectory($current);
+                BaseFileHelper::removeDirectory($path);
             }
         }
         
@@ -184,7 +185,12 @@ class UserController extends Controller
         // Delete user from the database
         TblUser::findById($user_id)->delete();
         
+        // Logs the user out
         Yii::$app->user->logout();
+        
+        // Sets success flash
+        Yii::$app->session->setFlash('userDeleteSuccess');
+        
         return $this->goHome();
     }
 }

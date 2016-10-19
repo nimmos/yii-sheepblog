@@ -229,16 +229,22 @@ class PostController extends Controller
             
             // Delete folder for header and thumbnail of the post
             
-            $directory = TblImage::routePostHeaderDir($post->user_id, $p);
+            $path = TblImage::pathGenerator(
+                    $post->user_id,
+                    TblImage::PATH_POST,
+                    null,
+                    null,
+                    $post->post_id);
             
-            if(file_exists($directory))
+            if(file_exists($path))
             {
-                BaseFileHelper::removeDirectory($directory);
+                BaseFileHelper::removeDirectory($path);
             }
             
             // Delete images of the post
             
-            $images = TblImage::routesImageFromContent($post->content, true);
+            $images = TblImage::getImagePathsFromContent($post->content, true);
+            
             if(!empty($images))
             {
                 foreach($images as $imagelink) {
@@ -252,8 +258,10 @@ class PostController extends Controller
             // Delete comments
             
             $comments = TblComment::findAll(['post_id' => $p]);
+            
             foreach($comments as $comment) {
-                $comment->delete();
+                Yii::$app->runAction('/post/delete-comment',
+                    ['c' => $comment->comment_id]);
             }
             
             // Delete post
@@ -279,10 +287,28 @@ class PostController extends Controller
         }
         
         $comment = TblComment::findOne($c);
-        if (isset($comment)) {
-            $comment->delete();
-        }
         
-        return $this->goBack();
+        if (isset($comment))
+        {
+            
+            // Delete images of the comment
+        
+            $images = TblImage::getImagePathsFromContent($comment->content, true);
+            if(!empty($images))
+            {
+                foreach($images as $imagelink) {
+                    $path = str_replace('\\', '/', getcwd()) . '/' . $imagelink;
+                    if(file_exists($path)) {
+                        unlink($path);
+                    }
+                }
+            }
+
+            // Delete comment
+
+            $comment->delete();
+            
+            return $this->goBack();
+        }
     }
 }

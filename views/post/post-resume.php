@@ -14,12 +14,18 @@ use app\models\TblImage;
         $content = mb_substr($content, 0, 160, 'UTF-8') . '...';
     }
 
-    // Establish jumbotron image
+    // Establish thumbnail image path
     
     if (isset($post->headerimage)) {
-        $path = $imagepath . TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
+        $thumbpath = TblImage::pathGenerator(
+                $post->user_id,
+                TblImage::HEADER,
+                $post->headerimage,
+                true,
+                $post->post_id
+        );
     } else {
-        $path = "/blogheader.thumbnail.jpg";
+        $thumbpath = TblImage::TEMP_THUMB;
     }
 ?>
 
@@ -53,7 +59,7 @@ use app\models\TblImage;
 <div id="container">
 
     <div id="thumbnail">
-        <img src="<?=$path?>"/>
+        <img src="<?=$thumbpath?>"/>
     </div>
     
     <div id="content">

@@ -248,10 +248,6 @@ class TblUser extends ActiveRecord implements IdentityInterface
                 $auth->assign($role, $user->user_id);
             }
 
-            // Sets success flash
-            
-            Yii::$app->session->setFlash('signupSuccess');
-            
             return true;
         } else { return false; }
     }

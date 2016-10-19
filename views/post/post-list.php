@@ -48,12 +48,22 @@ use yii\helpers\Html;
                 'header' => 'Image',
                 'format' => 'raw',
                 'headerOptions' => ['width' => '10%'],
-                'value' => function($data){
-                    $url = TblImage::routePostHeaderDir($data->user_id, $data->post_id)
-                            . TblImage::HEADER
-                            . TblImage::THUMBNAIL
-                            . $data->headerimage;
-                    return Html::img($url,[
+                'value' => function($post){
+                    
+                    if (isset($post->headerimage)) {
+                    
+                        $path = TblImage::pathGenerator(
+                                $post->user_id,
+                                TblImage::HEADER,
+                                $post->headerimage,
+                                true,
+                                $post->post_id
+                        );
+                    } else {
+                        $path = TblImage::TEMP_THUMB;
+                    }
+                    
+                    return Html::img($path,[
                         'width' => 40,
                         'height' => 40,
                     ]);
@@ -89,6 +99,13 @@ use yii\helpers\Html;
             ],
         ],
 ]) ?>
+
+<!-- Button for composing posts -->
+
+<?= Html::a('Compose a new post',
+    ['/post/post-compose'],
+    ['class' => 'btn btn-primary btn-block'])
+?>
 
 <!-- Modal window for delete confirm -->
 

@@ -17,7 +17,7 @@ use yii\helpers\Html;
     
     <?= $this->render('user-admin', [
         'user' => $user,
-        'image' => $image,
+        'imagepath' => $imagepath,
         'newimage' => $newimage,
     ]) ?>
 

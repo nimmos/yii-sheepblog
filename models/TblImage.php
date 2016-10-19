@@ -7,22 +7,43 @@ use yii\imagine\Image;
 
 class TblImage extends Model {
     
-    const UPLOADSROOT = 'uploads/';
-    const IMAGESROOT = 'rfmimages/';
-    const THUMBSROOT = 'rfmthumbs/';
+    ////////////////////////////////////////////////
+    // Constants
+    ////////////////////////////////////////////////
     
-    const POSTROOT = '/images/post/';
-    const USERROOT = '/images/user/';
+    // Root folders
+    
+    const ROOT_UPLOAD = 'uploads/';
+    const ROOT_RFM_IMG = 'rfmimages/';
+    const ROOT_RFM_THUMB = 'rfmthumbs/';
+    
+    const PATH_POST = '/images/post/';
+    const PATH_USER = '/images/user/';
+    
+    // Image type
     
     const HEADER = 'header';
     const PROFILE = 'profile';
     
-    const ORIGINAL = '.original';
-    const THUMBNAIL = '.thumbnail';
+    // Image size
     
-    const THUMBNAIL_W = 150;
-    const THUMBNAIL_H = 150;
-
+    const SIZE_ORIG = '.original';
+    const SIZE_THUMB = '.thumbnail';
+    
+    // Image size values
+    
+    const THUMB_W = 150;
+    const THUMB_H = 150;
+    
+    // Placeholders
+    
+    const TEMP_ORIG = "/blogheader.original.jpg";
+    const TEMP_THUMB = "/blogheader.thumbnail.jpg";
+    
+    ////////////////////////////////////////////////
+    // Properties
+    ////////////////////////////////////////////////
+    
     public $imageFile;
     public $imageRoute;
 
@@ -51,56 +72,84 @@ class TblImage extends Model {
     ////////////////////////////////////////////////
     // Route generators
     ////////////////////////////////////////////////
-        
-    /**
-     * Generates the route for the user profile image folder
-     * based on user_id
-     * 
-     * @param type $user_id
-     * @return type
-     */
-    public static function routeUserImageDir($user_id)
-    {
-        return TblImage::UPLOADSROOT . $user_id
-                . TblImage::USERROOT;
-    }
     
     /**
-     * Generates the route for the post image folder
-     * based on user_id
+     * It generates paths for:
+     * 
+     * - Folders for user profile images and the images
+     *   that the user uploads to the server.
+     * - Those said images.
      * 
      * @param type $user_id
-     * @return type
-     */
-    public static function routeRFMImageDir($user_id)
-    {
-        return TblImage::IMAGESROOT . $user_id . '/';
-    }
-    
-    /**
-     * Generates the route for the post thumbnail folder
-     * based on user_id
-     * 
-     * @param type $user_id
-     * @return type
-     */
-    public static function routeRFMThumbDir($user_id)
-    {
-        return TblImage::THUMBSROOT . $user_id . '/';
-    }
-    
-    /**
-     * Generates the route for the post header image folder
-     * based on user_id and post_id
-     * 
-     * @param type $user_id
+     * @param type $type It uses the model constants
+     * @param type $ext Image extension
+     * @param type $thumb If it's going to be a thumbnail or not
      * @param type $post_id
-     * @return type
+     * @return string
      */
-    public static function routePostHeaderDir($user_id, $post_id)
+    public static function pathGenerator ($user_id, $type=null, $ext=null, $thumb=false, $post_id=null)
     {
-        return TblImage::UPLOADSROOT . $user_id . '/'
-                . TblImage::POSTROOT . $post_id . '/';
+        switch ($type) {
+            
+            // Generate root folders
+            
+            case self::ROOT_UPLOAD:
+                // Path: 'uploads/1/'
+                $path = self::ROOT_UPLOAD . $user_id . '/';
+                break;
+            
+            case self::PATH_USER:
+                // Path: 'uploads/1/images/user/'
+                $path = self::ROOT_UPLOAD . $user_id . self::PATH_USER;
+                break;
+            
+            default:
+            case self::ROOT_RFM_IMG:
+                // Path: 'rfmimages/1/'
+                $path = self::ROOT_RFM_IMG . $user_id . '/';
+                break;
+            
+            case self::ROOT_RFM_THUMB:
+                // Path: 'rfmthumbs/1/'
+                $path = self::ROOT_RFM_THUMB . $user_id . '/';
+                break;
+            
+            // Generate post folder
+            
+            case self::PATH_POST:
+                // Path: 'uploads/1/images/post/23/'
+                $path = self::ROOT_UPLOAD . $user_id . self::PATH_POST . $post_id . '/';
+                break;
+            
+            // Generate user profile image path
+            
+            case self::PROFILE:
+                $path = $thumb ?
+                    // Path: 'uploads/1/images/user/profile.thumbnail.jpg'
+                    self::ROOT_UPLOAD . $user_id . self::PATH_USER
+                    . self::PROFILE . self::SIZE_THUMB . $ext
+                    :
+                    // Path: 'uploads/1/images/user/profile.original.jpg'
+                    self::ROOT_UPLOAD . $user_id . self::PATH_USER
+                    . self::PROFILE . self::SIZE_ORIG . $ext;
+                break;
+            
+            // Generate post header image path
+            
+            case self::HEADER:
+                
+                $path = $thumb ?
+                    // Path: 'uploads/1/images/post/23/header.thumbnail.jpg'
+                    self::ROOT_UPLOAD . $user_id . self::PATH_POST . $post_id . '/'
+                    . self::HEADER . self::SIZE_THUMB . $ext
+                    :
+                    // Path: 'uploads/1/images/post/23/header.original.jpg'
+                    self::ROOT_UPLOAD . $user_id . self::PATH_POST . $post_id . '/'
+                    . self::HEADER . self::SIZE_ORIG . $ext;
+                break;
+            
+        }
+        return $path;
     }
     
     /**
@@ -111,7 +160,7 @@ class TblImage extends Model {
      * @param type $thumbs if true, it also obtains thumbnail routes
      * @return array
      */
-    public static function routesImageFromContent ($content, $thumbs = false) {
+    public static function getImagePathsFromContent ($content, $thumbs = false) {
         
         $pattern = '/src\="([^"]*)\?/';
         preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE);
@@ -119,7 +168,7 @@ class TblImage extends Model {
         foreach($matches[1] as $array) {    
             $result[] = $array[0];
             if($thumbs) {
-                $result[] = str_replace(TblImage::IMAGESROOT, TblImage::THUMBSROOT, $array[0]);
+                $result[] = str_replace(TblImage::ROOT_RFM_IMG, TblImage::ROOT_RFM_THUMB, $array[0]);
             }
         }
         
@@ -139,14 +188,11 @@ class TblImage extends Model {
     {
         if ($this->validate()) {
             
-            // Profile image name
-            $imagename = self::PROFILE . self::ORIGINAL . $user->userimage;
+            // Generate profile image path
+            $imagepath = self::pathGenerator($user->user_id, self::PROFILE, $user->userimage);
             
-            // Profile image path
-            $this->imageRoute = self::routeUserImageDir($user->user_id) . $imagename;
-                
             // Save profile image
-            $this->imageFile->saveAs($this->imageRoute);
+            $this->imageFile->saveAs($imagepath);
             
             return true;
         } else { return false; }
@@ -159,33 +205,48 @@ class TblImage extends Model {
      */
     public function saveHeaderImage($post)
     {
-        
-        // Image name
-        $imagename = TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
 
-        // Create the folder in which the image will be saved, and set route
+        // Create the folder in which the image will be saved
         
-        $directory = TblImage::routePostHeaderDir($post->user_id, $post->post_id);
+        $path = TblImage::pathGenerator(
+                $post->user_id,
+                TblImage::PATH_POST,
+                null,
+                null,
+                $post->post_id
+        );
 
-        if(!file_exists($directory))
+        if(!file_exists($path))
         {
-            BaseFileHelper::createDirectory($directory);
+            BaseFileHelper::createDirectory($path);
         }
 
-        // Establish image path
-        $this->imageRoute = $directory . $imagename;
+        // Generate image path
+        $imagepath = TblImage::pathGenerator(
+                $post->user_id,
+                TblImage::HEADER,
+                $post->headerimage,
+                false,
+                $post->post_id
+        );
 
         if ($this->validate()) {
             
-            // Save image in directory
-            $this->imageFile->saveAs($this->imageRoute);
+            // Save image
+            $this->imageFile->saveAs($imagepath);
         
-            // Thumbnail image name
-            $imagename = TblImage::HEADER . TblImage::THUMBNAIL . $post->headerimage;
+            // Generate thumbnail image path
+            $thumbpath = TblImage::pathGenerator(
+                    $post->user_id,
+                    TblImage::HEADER,
+                    $post->headerimage,
+                    true,
+                    $post->post_id
+            );
 
             // Create and save the thumbnail
-            Image::thumbnail($this->imageRoute, TblImage::THUMBNAIL_W, TblImage::THUMBNAIL_W)
-                ->save(($directory . $imagename), ['quality' => 50]);
+            Image::thumbnail($imagepath, TblImage::THUMB_W, TblImage::THUMB_H)
+                ->save(($thumbpath), ['quality' => 50]);
 
             return true;    
         } else { return false; }

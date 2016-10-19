@@ -7,17 +7,26 @@ use yii\widgets\ListView;
 
 $this->title = 'Sheepblog';
 ?>
+
 <style>
+    
     .jumbotron {
-        background: url(/blogheader.original.jpg) no-repeat;
+        background: url(<?=TblImage::TEMP_ORIG?>) no-repeat;
         background-size: cover;
         color: white;
         text-align: right;
     }
+    
+    .alert {
+        text-align: center;
+    }
+    
     li {
         border-radius: 6px;
     }
+    
 </style>
+
 <div class="site-index">
 
     <!-- Jumbotron for the blog title -->
@@ -27,16 +36,27 @@ $this->title = 'Sheepblog';
         <div class="jumbotron-title">
             <h1><b>Sheepblog</b></h1>
             <p>Why 'Sheepblog'? Cause I like sheeps, that's all.</p>
-            <br><br>
+            
+            <!-- Feedback messages -->
+            
+            <?php if (Yii::$app->session->hasFlash('userDeleteSuccess')): ?>
+                <div class="alert alert-danger fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <p><strong>Your account has been deleted succesfully.</strong></p>
+                </div>
+            <?php endif; ?>
+            
         </div>
         
         <!-- If the user is authenticated, this makes a button for posting -->
+        
         <?php if (!Yii::$app->user->isGuest): ?>
             <?= Html::a('Why don\'t we start by posting something',
                 ['/post/post-compose'],
                 ['class' => 'btn btn-primary btn-block'])
             ?>
         <?php endif; ?>
+        
     </div>
     
     <!-- Show recent entries -->
@@ -58,7 +78,6 @@ $this->title = 'Sheepblog';
 		return $this->render('post-resume',[
                     'post' => $model,
                     'author' => TblUser::findUsernameById($model->user_id),
-                    'imagepath' => TblImage::routePostHeaderDir($model->user_id, $model->post_id),
                 ]);
             },
             'pager' => [

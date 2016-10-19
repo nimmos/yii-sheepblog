@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
         ]); ?>
         
             <label for="tblimage-imagefile">
-                <img src="<?=$image?>" width="200" height="200"
+                <img src="<?=$imagepath?>" width="200" height="200"
                 data-toggle="tooltip" data-placement="bottom" title="Change image"/>
             </label>
             

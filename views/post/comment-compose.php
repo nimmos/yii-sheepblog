@@ -13,7 +13,7 @@ use yii\bootstrap\Html;
     {
         $_SESSION["RF"]["subfolder"] = "";
     } else {
-        $_SESSION["RF"]["subfolder"] = Yii::$app->user->id . "/images/post";
+        $_SESSION["RF"]["subfolder"] = Yii::$app->user->id;
     }
 ?>
 

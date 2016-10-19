@@ -15,13 +15,21 @@ use yii\widgets\ListView;
     // Establish jumbotron image
     
     if (isset($post->headerimage)) {
-        $path = TblImage::routePostHeaderDir($post->user_id, $post->post_id)
-                . TblImage::HEADER . TblImage::ORIGINAL . $post->headerimage;
-        $image = "background: url($path) no-repeat center center;";
+        
+        $path = TblImage::pathGenerator(
+                $post->user_id,
+                TblImage::HEADER,
+                $post->headerimage,
+                false,
+                $post->post_id
+        );
+        $image = "background: url($path) no-repeat center center; background-size: cover;";
         $color = "color: white;";
+        $filter = "filter: drop-shadow(2px 2px 1px black);";
     } else {
         $image = "";
         $color = "color: black;";
+        $filter = "";
     }
     
 ?>
@@ -32,10 +40,9 @@ use yii\widgets\ListView;
     .jumbotron {
         <?=$color?>
         <?=$image?>
-        background-size: cover;
     }
     .jumbo-title {
-        filter: drop-shadow(2px 2px 1px black);
+        <?=$filter?>
     }
 </style>
 <div>
@@ -69,7 +76,7 @@ use yii\widgets\ListView;
     <!-- Gallery section -->
     
     <?= $this->render('slick-post', [
-            'images' => TblImage::routesImageFromContent($post->content),
+            'images' => TblImage::getImagePathsFromContent($post->content),
     ]) ?>
         
     <!-- If user is authenticated: display comment form -->
