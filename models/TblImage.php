@@ -1,6 +1,9 @@
 <?php
 namespace app\models;
 
+use Imagine\Image\Box;
+use Imagine\Image\Point;
+use Imagine\Gd\Imagine;
 use yii\base\Model;
 use yii\helpers\BaseFileHelper;
 use yii\imagine\Image;
@@ -180,6 +183,7 @@ class TblImage extends Model {
     
     /**
      * Saves the uploaded profile image in the db.
+     * It will crop the image to have a square shape.
      * 
      * @param type $user
      * @return boolean
@@ -193,6 +197,21 @@ class TblImage extends Model {
             
             // Save profile image
             $this->imageFile->saveAs($imagepath);
+            
+            // Cropping image operations
+            
+            // Open image
+            $imagine = new Imagine();
+            $img = $imagine->open($imagepath);
+            
+            // Establish minimum size
+            $img_h = $img->getSize()->getHeight();
+            $img_w = $img->getSize()->getWidth();
+            $min_size = ($img_h > $img_w) ? $img_w : $img_h;
+            
+            // Crop and save
+            $img->crop(new Point(0,0), new Box($min_size, $min_size))
+                ->save($imagepath);
             
             return true;
         } else { return false; }
@@ -234,7 +253,9 @@ class TblImage extends Model {
             
             // Save image
             $this->imageFile->saveAs($imagepath);
-        
+            
+            // Thumbnail image operations
+            
             // Generate thumbnail image path
             $thumbpath = TblImage::pathGenerator(
                     $post->user_id,

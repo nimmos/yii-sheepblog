@@ -6,6 +6,9 @@ use yii\helpers\Html;
 use yii\widgets\ListView;
 
 $this->title = 'Sheepblog';
+// Set return URL
+Yii::$app->user->setReturnUrl(['/post/index']);
+
 ?>
 
 <style>
@@ -17,35 +20,28 @@ $this->title = 'Sheepblog';
         text-align: right;
     }
     
-    .alert {
+    #delete-message {
+        background-color: rgba(217, 83, 79, 0.60);
+        margin-top: 20px;
+        margin-bottom: 0px;
         text-align: center;
     }
     
-    li {
-        border-radius: 6px;
+    #delete-message > p {
+        font-size: medium;
     }
     
 </style>
 
 <div class="site-index">
-
+    
     <!-- Jumbotron for the blog title -->
     
     <div class="jumbotron">
-
+        
         <div class="jumbotron-title">
             <h1><b>Sheepblog</b></h1>
             <p>Why 'Sheepblog'? Cause I like sheeps, that's all.</p>
-            
-            <!-- Feedback messages -->
-            
-            <?php if (Yii::$app->session->hasFlash('userDeleteSuccess')): ?>
-                <div class="alert alert-danger fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <p><strong>Your account has been deleted succesfully.</strong></p>
-                </div>
-            <?php endif; ?>
-            
         </div>
         
         <!-- If the user is authenticated, this makes a button for posting -->
@@ -55,6 +51,14 @@ $this->title = 'Sheepblog';
                 ['/post/post-compose'],
                 ['class' => 'btn btn-primary btn-block'])
             ?>
+        <?php endif; ?>
+        
+        <!-- Feedback messages -->
+            
+        <?php if (Yii::$app->session->hasFlash('userDeleteSuccess')): ?>
+            <div id="delete-message" class="alert fade in" data-dismiss="alert" aria-label="close">
+                <p>Your account has been deleted succesfully.</p>
+            </div>
         <?php endif; ?>
         
     </div>
@@ -73,6 +77,7 @@ $this->title = 'Sheepblog';
             'itemOptions' => [
                 'tag' => 'li',
                 'class' => 'list-group-item',
+                'style' => 'border-right: 0; border-left:0;',
             ],
             'itemView' => function ($model, $key, $index, $widget) {
 		return $this->render('post-resume',[
@@ -87,9 +92,16 @@ $this->title = 'Sheepblog';
                 'prevPageLabel' => 'Newer',
                 'maxButtonCount' => 5,
             ],
+            'layout' => '{items}{pager}',
             'summary' => 'Showing {begin}-{end} from {totalCount} posts<br/>',
         ]) ?>
 
     </div>
 </div>
 
+<script>
+    $(document).ready(function(){
+        $(".list-group-item:first").css("border-top", "0");
+        $(".list-group-item:last").css("border-bottom", "0");
+    });
+</script>

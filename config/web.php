@@ -11,7 +11,7 @@ $config = [
             'class' => 'yii\rbac\DbManager',
         ],
         'request' => [
-            'cookieValidationKey' => '1234',
+            'cookieValidationKey' => '$2y$13$RU1b5BEx4Hfd/e0UMjXWKe9EQJmpSaB.4EInLu5yb2DE/Xvr51QU2',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',

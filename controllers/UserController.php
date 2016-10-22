@@ -43,7 +43,7 @@ class UserController extends Controller
                 break;
             case 'guest':
             default:
-                $this->layout = 'main';
+                $this->layout = 'guest';
         }
         
         parent::init();

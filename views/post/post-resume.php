@@ -39,15 +39,17 @@ use app\models\TblImage;
     #thumbnail, #content {
         display: inline-block;
         *display: inline;
-        vertical-align: middle;
+        vertical-align: top;
     }
     
     #thumbnail {
+        margin-top: 20px;
+        margin-bottom: 20px;
         width: 15%;
     }
     
     #thumbnail img {
-        width: 90%;
+        width: 80%;
         border-radius: 100%;
     }
     

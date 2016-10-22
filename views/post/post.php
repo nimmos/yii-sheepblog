@@ -14,22 +14,36 @@ use yii\widgets\ListView;
 
     // Establish jumbotron image
     
-    if (isset($post->headerimage)) {
-        
-        $path = TblImage::pathGenerator(
+    if (isset($post->headerimage))
+    {    
+        $headerpath = TblImage::pathGenerator(
                 $post->user_id,
                 TblImage::HEADER,
                 $post->headerimage,
                 false,
                 $post->post_id
         );
-        $image = "background: url($path) no-repeat center center; background-size: cover;";
-        $color = "color: white;";
-        $filter = "filter: drop-shadow(2px 2px 1px black);";
+        
+        $jumbotron_css = "color: white;"
+                . "background: url($headerpath) no-repeat center center; background-size: cover;";
+        $jumbotron_title_css = "filter: drop-shadow(2px 2px 1px black);";
     } else {
-        $image = "";
-        $color = "color: black;";
-        $filter = "";
+        $jumbotron_css = "color: black;";
+        $jumbotron_title_css = "";
+    }
+    
+    // Establish author profile thumbnail image
+    
+    if (isset($author->userimage))
+    {
+        $profilepath = TblImage::pathGenerator(
+                $author->user_id,
+                TblImage::PROFILE,
+                $author->userimage,
+                false
+        );
+    } else {
+        $profilepath = TblImage::TEMP_THUMB;
     }
     
 ?>
@@ -38,40 +52,54 @@ use yii\widgets\ListView;
 
 <style>
     .jumbotron {
-        <?=$color?>
-        <?=$image?>
+        <?=$jumbotron_css?>
     }
-    .jumbo-title {
-        <?=$filter?>
+    .jumbotron-title {
+        <?=$jumbotron_title_css?>
+    }
+    .profile-image {
+        border-radius: 100%;
     }
 </style>
+
 <div>
     
-    <!-- Post section -->
+    <!-- Post content section -->
     
     <div class="jumbotron">
-        <h2 class="jumbo-title"><?= Html::encode($this->title) ?></h2>
+        <h2 class="jumbotron-title"><?= Html::encode($this->title) ?></h2>
     </div>
     <div>
         <p>
             <?= HtmlPurifier::process($post->content) ?>
         </p>
+        <br>
     </div>
     
-    <div class="well well-sm" style="color:#ababab;">
-        <p>
-            <strong>Posted on: </strong><?= $post->time ?><br>
-            <strong>Words by: </strong><?= Html::encode($author) ?>
-        </p>
+    <!-- Post author section -->
+    
+    <div class="well well-sm" style="color:#3d3d3d;">
+        <div class="row">
+            <div id="author-thumbnail" class="col-sm-1">
+                <img class="profile-image" src="<?=$profilepath?>" width="80" height="80"/>
+            </div>
+            
+            <div id="author-data" class="col-sm-5">
+                <p>
+                    <strong>Posted on: </strong><?= $post->time ?><br>
+                    <strong>Words by: </strong><?= Html::encode($author->username) ?>
+                </p>
+                
+                <!-- If user is authenticated: display post administration -->
+    
+                <?php if (!Yii::$app->user->isGuest): ?>
+
+                    <?= $this->render('post-admin', ['user_id' => $post->user_id])?>
+
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
-    
-    <!-- If user is authenticated: display post administration -->
-    
-    <?php if (!Yii::$app->user->isGuest): ?>
-    
-        <?= $this->render('post-admin', ['user_id' => $post->user_id])?>
-    
-    <?php endif; ?>
     
     <!-- Gallery section -->
     
@@ -120,7 +148,7 @@ use yii\widgets\ListView;
             ],
             'itemView' => function ($model, $key, $index, $widget) {
 		return $this->render('comment', [
-                    'username' => TblUser::findUsernameById($model->user_id),
+                    'author' => TblUser::findById($model->user_id),
                     'comment' => $model,
                 ]);
             },

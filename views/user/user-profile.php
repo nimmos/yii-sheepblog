@@ -19,6 +19,7 @@ use yii\helpers\Html;
         'user' => $user,
         'imagepath' => $imagepath,
         'newimage' => $newimage,
+        'totalPosts' => $dataProvider->totalCount,
     ]) ?>
 
     <hr>

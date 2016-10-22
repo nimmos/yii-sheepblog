@@ -6,11 +6,13 @@ use app\models\TblComment;
 use app\models\TblImage;
 use app\models\TblPost;
 use app\models\TblUser;
-use Imagine\Gd\Imagine;
+use DateInterval;
+use DateTime;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\BaseFileHelper;
 use yii\web\Controller;
+use yii\web\Cookie;
 use yii\web\UploadedFile;
 
 class PostController extends Controller
@@ -44,7 +46,7 @@ class PostController extends Controller
                 break;
             case 'guest':
             default:
-                $this->layout = 'main';
+                $this->layout = 'guest';
         }
         
         parent::init();
@@ -70,6 +72,24 @@ class PostController extends Controller
             'posts' => $posts,
         ]);
     }
+    
+    /**
+     * Sets a cookie for accepting cookies
+     * 
+     * @return type
+     */
+    public function actionSetCookie()
+    {
+        $cookies = Yii::$app->response->cookies;
+        
+        $cookies->add(new Cookie([
+            'name' => 'cookie-accept',
+            'value' => true,
+            'expire' => (new DateTime())->add(new DateInterval('P2Y'))->getTimestamp(),
+        ]));
+        
+        return $this->goHome();
+    }
 
     /**
      * Displays post view.
@@ -93,7 +113,7 @@ class PostController extends Controller
         
         // Obtain author of the post
         
-        $author = TblUser::findUsernameById($post->user_id);
+        $author = TblUser::findById($post->user_id);
         
         // Publish new comment if POST retrieves one
         
@@ -108,8 +128,11 @@ class PostController extends Controller
             }
         }
         
-        return $this->render('post', [ 'post' => $post, 'author' => $author,
-            'comment' => $comment, 'comments' => $comments,
+        return $this->render('post', [
+            'post' => $post,
+            'author' => $author,
+            'comment' => $comment,
+            'comments' => $comments,
         ]);
     }
 

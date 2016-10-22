@@ -10,8 +10,6 @@ use yii\helpers\Html;
 
 ?>
 
-<hr>
-
 <?php if (Yii::$app->user->can('updatePost') ||
     Yii::$app->user->can('updateOwnPost', ['user_id' => $user_id])
 ): ?>

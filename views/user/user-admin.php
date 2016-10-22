@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
 <div class="row">
     
-    <!-- Profile image -->
+    <!-- User profile image -->
     
     <div class="col-lg-2">
         
@@ -33,14 +33,22 @@ use yii\widgets\ActiveForm;
         <?php ActiveForm::end(); ?>
     </div>
     
+    <!-- User profile data and administration -->
+    
     <div class="col-lg-9" style="margin: 20px">
         
         <!-- User profile data -->
         
         <div class="user-data">
             
-            <p><strong>Username: </strong><?=$user->username?></p>
-            <p><strong>Role: </strong><?=  ucfirst($_SESSION["role"])?></p>
+            <p><strong>Username: </strong><?=Html::encode($user->username)?></p>
+            
+            <p><strong>Role: </strong><?=ucfirst($_SESSION["role"])?></p>
+            
+            <?php if($_SESSION['role']=='admin'): ?>
+            <p><strong>Total posts: </strong><?=$totalPosts?> (in this blog)</p>
+            <?php endif; ?>
+            
             <p>If you want to change something about your profile, click the next buttons.</p>
             
             <?= Html::button('Change user data', [

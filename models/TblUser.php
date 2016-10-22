@@ -6,7 +6,6 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\helpers\BaseFileHelper;
 use yii\web\IdentityInterface;
 
 /**
