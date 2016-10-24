@@ -2,6 +2,10 @@
 
 namespace app\models;
 
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
+use yii\db\Query;
+
 /**
  * This is the model class for table "tbl_post".
  *
@@ -12,11 +16,22 @@ namespace app\models;
  * @property string $content
  * @property string $headerimage
  *
- * @property Comment[] $comments
- * @property User $user
+ * @property TblComment[] $comments
+ * @property TblUser $user
  */
-class TblPost extends \yii\db\ActiveRecord
+class TblPost extends ActiveRecord
 {
+    public $tags;
+    
+    public function loadTags () {
+        $this->tags = TblTag::find()
+                ->select(['t.tagname'])
+                ->from(['tbl_tags t', 'tbl_tag_assign a'])
+                ->where('t.tag_id=a.tag_id')
+                ->andWhere(['a.post_id' => $this->post_id])
+                ->all();
+    }
+    
     /**
      * @inheritdoc
      */
@@ -63,19 +78,19 @@ class TblPost extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getComments()
     {
-        return $this->hasMany(Comment::className(), ['post_id' => 'post_id']);
+        return $this->hasMany(TblComment::className(), ['post_id' => 'post_id']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['user_id' => 'user_id']);
+        return $this->hasOne(TblUser::className(), ['user_id' => 'user_id']);
     }
     
     /**

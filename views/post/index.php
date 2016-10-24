@@ -63,44 +63,70 @@ Yii::$app->user->setReturnUrl(['/post/index']);
         
     </div>
     
-    <!-- Show recent entries -->
-
-    <div class="body-content">
+    <div id="recent-posts" class="row">
         
-        <?= ListView::widget([
-            'dataProvider' => $posts,
-            'options' => [
-                'tag' => 'ul',
-                'class' => 'list-group',
-                'id' => 'list-wrapper',
-            ],
-            'itemOptions' => [
-                'tag' => 'li',
-                'class' => 'list-group-item',
-                'style' => 'border-right: 0; border-left:0;',
-            ],
-            'itemView' => function ($model, $key, $index, $widget) {
-		return $this->render('post-resume',[
-                    'post' => $model,
-                    'author' => TblUser::findUsernameById($model->user_id),
-                ]);
-            },
-            'pager' => [
-                'firstPageLabel' => 'More recent',
-                'lastPageLabel' => 'First ones',
-                'nextPageLabel' => 'Older',
-                'prevPageLabel' => 'Newer',
-                'maxButtonCount' => 5,
-            ],
-            'layout' => '{items}{pager}',
-            'summary' => 'Showing {begin}-{end} from {totalCount} posts<br/>',
-        ]) ?>
+        <!-- Show recent entries -->
+        
+        <div class="body-content col-lg-9">
+            
+            <h3>What was posted lately...</h3>
+            
+            <?= ListView::widget([
+                'dataProvider' => $posts,
+                'options' => [
+                    'tag' => 'ul',
+                    'class' => 'list-group',
+                    'id' => 'list-wrapper',
+                ],
+                'itemOptions' => [
+                    'tag' => 'li',
+                    'class' => 'list-group-item',
+                    'style' => 'border-right:0; border-left:0;',
+                ],
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return $this->render('post-resume',[
+                        'post' => $model,
+                        'author' => TblUser::findUsernameById($model->user_id),
+                    ]);
+                },
+                'pager' => [
+                    'firstPageLabel' => 'More recent',
+                    'lastPageLabel' => 'First ones',
+                    'nextPageLabel' => 'Older',
+                    'prevPageLabel' => 'Newer',
+                    'maxButtonCount' => 5,
+                ],
+                'layout' => '{items}{pager}',
+                'summary' => 'Showing {begin}-{end} from {totalCount} posts<br/>',
+            ]) ?>
 
+        </div>
+        
+        <!-- Tags section -->
+        
+        <div class="body-content col-lg-3">
+            <h3>Tags</h3>
+            
+            <?php if(!empty($tags)): ?>
+            <?php foreach($tags as $tag): ?>
+                <div class="tag btn-primary">
+                    <?=Html::encode($tag->tagname)?>
+                </div>
+            <?php endforeach; ?>
+            <?php else: ?>
+                <p>
+                    No tags found.
+                </p>
+            <?php endif; ?>
+            
+        </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function(){
+        
+        // Remove unnecessary borders from post list
         $(".list-group-item:first").css("border-top", "0");
         $(".list-group-item:last").css("border-bottom", "0");
     });

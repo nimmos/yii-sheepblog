@@ -20,26 +20,45 @@ use yii\helpers\Html;
 
 ?>
 
+<style>
+    .comment-data>.author-thumbnail {
+        float: left;
+        margin-top: 5px;
+    }
+    .comment-data>.author-data {
+        float: left;
+        margin-top: 25px;
+        margin-left: 10px;
+    }
+</style>
+
 <!-- Comment view, to be embedded into a post -->
 
-
 <div class="row">
-    <div class="col-lg-9">
-        <div id="author-thumbnail" style="float:left; margin-top:5px;">
+    
+    <!-- Comment data -->
+    
+    <div class="comment-data col-lg-9">
+        <div class="author-thumbnail">
             <img class="profile-image" src="<?=$profilepath?>" width="50" height="50"/>
         </div>
 
-        <div id="author-data" style="float:left; margin-left:10px; margin-top:25px;">
+        <div class="author-data">
             <p>
                 <h4><strong><?= Html::encode($author->username) ?></strong> says:</h4>
-
             </p>
         </div>
     </div>
 </div>
 
 <div>
+    
+    <!-- Comment content -->
+    
     <p><?= $comment->content ?></p>
+    
+    <!-- Time and delete -->
+    
     <p style="color:#ababab;">
         Said on: <?= $comment->time ?>
 

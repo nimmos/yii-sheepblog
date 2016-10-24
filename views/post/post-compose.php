@@ -20,6 +20,21 @@ use yii\bootstrap\Html;
 
 ?>
 
+<style>
+    .bootstrap-tagsinput {
+        margin-bottom: 10px;
+    }
+    .tag {
+        float: left;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin: 5px 5px;
+        border-radius: 5px;
+    }
+</style>
+
 <!-- Post composing info -->
 
 <div>
@@ -61,14 +76,20 @@ use yii\bootstrap\Html;
                 ]
             ]) ?>
             
+            <!-- Tag input -->
+            
+            <p><strong>Tags</strong></p>
+            <input id="tag-input" type="text" data-role="tagsinput"
+               value="What,Is,This"/>
+            
             <!-- Upload an image -->
             
             <?= $form->field($image, 'imageFile')->fileInput() ?>
             
-            <?php if (!$edit): ?>
-            
             <!-- Displays a 'publish' or 'edit + cancel' button
             depending on 'edit' mode -->
+            
+            <?php if (!$edit): ?>
        
             <div class = "form-group">
                 <?= Html::submitButton('Publish post', [

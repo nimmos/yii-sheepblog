@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\TblComment;
 use app\models\TblImage;
 use app\models\TblPost;
+use app\models\TblTag;
 use app\models\TblUser;
 use DateInterval;
 use DateTime;
@@ -62,14 +63,20 @@ class PostController extends Controller
         
         // Retrieve all posts in ActiveDataProvider
         // sorted from recent posts to older posts
-        
         $posts = new ActiveDataProvider([
             'query' => TblPost::find()->orderBy('time DESC'),
             'pagination' => [ 'pageSize' => 3 ],
         ]);
         
+        // Retrieve all tags in ActiveDataProvider
+        // sorted alphabetically
+        $tags = new ActiveDataProvider([
+            'query' => TblTag::find()->orderBy('tagname ASC'),
+        ]);
+        
         return $this->render('index', [
             'posts' => $posts,
+            'tags' => $tags->getModels(),
         ]);
     }
     
@@ -101,18 +108,18 @@ class PostController extends Controller
     {
         
         // Obtain the required post by its id
-        
         $post = TblPost::getPostById($p);
         
-        // Obtain the comments of the post
+        // Load its tags
+        $post->loadTags();
         
+        // Obtain the comments of the post
         $comments = new ActiveDataProvider([
             'query' => TblComment::find()
                 ->where(['post_id' => $p]),
         ]);
         
         // Obtain author of the post
-        
         $author = TblUser::findById($post->user_id);
         
         // Publish new comment if POST retrieves one

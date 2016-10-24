@@ -51,15 +51,41 @@ use yii\widgets\ListView;
 <!-- View for post -->
 
 <style>
+    
     .jumbotron {
         <?=$jumbotron_css?>
     }
     .jumbotron-title {
         <?=$jumbotron_title_css?>
     }
+    .post-data>.author-thumbnail {
+        float: left;
+        margin-left: 20px;
+        margin-top: 5px;
+    }
+    .post-data>.author-data {
+        float:left;
+        margin-left: 15px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
     .profile-image {
         border-radius: 100%;
     }
+    .tag-section {
+        margin-bottom: 50px;
+    }
+    .tag {
+        float: left;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin: 5px 5px;
+        border-radius: 5px;
+    }
+    
+    
 </style>
 
 <div>
@@ -79,12 +105,12 @@ use yii\widgets\ListView;
     <!-- Post author section -->
     
     <div class="well well-sm" style="color:#3d3d3d;">
-        <div class="row">
-            <div id="author-thumbnail" class="col-sm-1">
+        <div class="post-data row">
+            <div class="author-thumbnail">
                 <img class="profile-image" src="<?=$profilepath?>" width="80" height="80"/>
             </div>
             
-            <div id="author-data" class="col-sm-5">
+            <div class="author-data">
                 <p>
                     <strong>Posted on: </strong><?= $post->time ?><br>
                     <strong>Words by: </strong><?= Html::encode($author->username) ?>
@@ -99,6 +125,27 @@ use yii\widgets\ListView;
                 <?php endif; ?>
             </div>
         </div>
+    </div>
+    
+    <!-- Tags section -->
+    
+    <div class="tag-section">
+
+        <?php if(!empty($post->tags)): ?>
+            <p>
+                Tagged in:
+                <?php foreach($post->tags as $tag): ?>
+                    <div class="tag btn-primary">
+                        <?=Html::encode($tag->tagname)?>
+                    </div>
+                <?php endforeach; ?>
+            </p>
+        <?php else: ?>
+            <p>
+                No tags found.
+            </p>
+        <?php endif; ?>
+            <br>
     </div>
     
     <!-- Gallery section -->
