@@ -5,9 +5,9 @@ use app\models\TblImage;
 use yii\helpers\Html;
 use yii\widgets\ListView;
 
-$this->title = 'Sheepblog';
-// Set return URL
-Yii::$app->user->setReturnUrl(['/post/index']);
+    $this->title = 'Sheepblog';
+    // Set return URL
+    Yii::$app->user->setReturnUrl(['/post/index']);
 
 ?>
 
@@ -29,6 +29,16 @@ Yii::$app->user->setReturnUrl(['/post/index']);
     
     #delete-message > p {
         font-size: medium;
+    }
+    
+    .tag {
+        float: left;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin: 5px 5px;
+        border-radius: 5px;
     }
     
 </style>

@@ -22,7 +22,7 @@ class m161024_143346_create_tbl_tag_assign_table extends Migration
         }
         
         $this->createTable('tbl_tag_assign', [
-            'tag_assing_id' => $this->primaryKey(),
+            'tag_assign_id' => $this->primaryKey(),
             'tag_id' => $this->integer()->notNull(),
             'post_id' => $this->integer()->notNull(),
         ], $tableOptions);

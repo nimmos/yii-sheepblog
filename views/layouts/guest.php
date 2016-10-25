@@ -26,10 +26,6 @@ AppAsset::register($this);
     <!-- Adding jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     
-    <!-- Adding bootstrap tagsinput -->
-    <link rel="stylesheet" type="text/css" href="extensions/tagsinput/bootstrap-tagsinput.css"/>
-    <script src="extensions/tagsinput/bootstrap-tagsinput.js"></script>
-    
     <?php $this->head() ?>
 </head>
 <body>

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TblTag;
 use dosamigos\tinymce\TinyMce;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
@@ -21,9 +22,19 @@ use yii\bootstrap\Html;
 ?>
 
 <style>
-    .bootstrap-tagsinput {
-        margin-bottom: 10px;
+    
+    /////////////////////////////////
+    // HOW DO I DO THIS
+    /////////////////////////////////
+    .field-tag-input>.control-label {
+        clear: left;
     }
+    /////////////////////////////////
+    
+    .bootstrap-tagsinput > input {
+        
+    }
+    
     .tag {
         float: left;
         padding-top: 5px;
@@ -33,6 +44,7 @@ use yii\bootstrap\Html;
         margin: 5px 5px;
         border-radius: 5px;
     }
+    
 </style>
 
 <!-- Post composing info -->
@@ -78,9 +90,11 @@ use yii\bootstrap\Html;
             
             <!-- Tag input -->
             
-            <p><strong>Tags</strong></p>
-            <input id="tag-input" type="text" data-role="tagsinput"
-               value="What,Is,This"/>
+            <?= $form->field($post, 'tags')->textInput([
+                'id' => 'tag-input',
+                'data-role' => 'tagsinput',
+                'value' => TblTag::turnString($post->tags),
+            ]);?>
             
             <!-- Upload an image -->
             
@@ -110,3 +124,29 @@ use yii\bootstrap\Html;
        
    </div>
 </div>
+
+<script>
+    
+    // Prevent enter key from submitting form
+    // affects the ENTIRE form
+    $('#post-compose-form').on('keyup keypress', function(event) {
+        var keyCode = event.keyCode || event.which;
+        if (keyCode === 13) { 
+            event.preventDefault();
+            return false;
+        }
+    });
+    
+    $(document).ready(function(){
+        
+        // CSS of tags input
+        
+        //$('.bootstrap-tagsinput').css("clear","left");
+        $('.bootstrap-tagsinput > input').css({
+            "font-size" : "medium",
+            "margin-top" : "10px",
+            "margin-bottom" : "10px"
+        });
+    });
+    
+</script>

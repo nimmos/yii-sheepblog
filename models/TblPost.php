@@ -23,15 +23,6 @@ class TblPost extends ActiveRecord
 {
     public $tags;
     
-    public function loadTags () {
-        $this->tags = TblTag::find()
-                ->select(['t.tagname'])
-                ->from(['tbl_tags t', 'tbl_tag_assign a'])
-                ->where('t.tag_id=a.tag_id')
-                ->andWhere(['a.post_id' => $this->post_id])
-                ->all();
-    }
-    
     /**
      * @inheritdoc
      */
@@ -74,6 +65,7 @@ class TblPost extends ActiveRecord
             'title' => 'Post title',
             'content' => 'Post content',
             'headerimage' => 'Header Image',
+            'tags' => 'Tags',
         ];
     }
 
@@ -99,10 +91,20 @@ class TblPost extends ActiveRecord
      * @param type $post_id
      * @return type
      */
-    public static function getPostById($post_id = 1)
+    public static function getPostById ($post_id)
     {
-        $post = TblPost::findOne($post_id);
-        return $post;
+        return TblPost::findOne($post_id);
+    }
+    
+    /**
+     * Gets the post's author id
+     * 
+     * @param type $post_id
+     * @return type
+     */
+    public static function getAuthorId ($post_id)
+    {
+        return TblPost::findOne($post_id)->user_id;
     }
     
     /**

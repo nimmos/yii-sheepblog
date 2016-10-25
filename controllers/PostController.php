@@ -54,6 +54,32 @@ class PostController extends Controller
     }
     
     /**
+     * This function is called before every action
+     * 
+     * @param type $action
+     * @return boolean
+     */
+    public function beforeAction($action) {
+        
+        if(parent::beforeAction($action)) {
+            
+            switch($this->action->id) {
+                case 'index':
+                case 'set-cookie':
+                case 'post':
+                    return true;
+                default:
+                    // If user is guest, lead it back to home
+                    if (Yii::$app->user->isGuest) {
+                        return $this->goHome();
+                    } else {
+                        return true;
+                    }
+            }
+        }
+    }
+    
+    /**
      * Default index.
      * 
      * @return type
@@ -87,15 +113,17 @@ class PostController extends Controller
      */
     public function actionSetCookie()
     {
+        // Get cookies
         $cookies = Yii::$app->response->cookies;
         
+        // Add a new one
         $cookies->add(new Cookie([
             'name' => 'cookie-accept',
             'value' => true,
             'expire' => (new DateTime())->add(new DateInterval('P2Y'))->getTimestamp(),
         ]));
         
-        return $this->goHome();
+        return $this->goBack();
     }
 
     /**
@@ -111,7 +139,7 @@ class PostController extends Controller
         $post = TblPost::getPostById($p);
         
         // Load its tags
-        $post->loadTags();
+        $post->tags = TblTag::getTags($post->post_id);
         
         // Obtain the comments of the post
         $comments = new ActiveDataProvider([
@@ -150,10 +178,6 @@ class PostController extends Controller
      */
     public function actionPostCompose ()
     {
-        
-        if (Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
         
         $post = new TblPost();
         $image = new TblImage();
@@ -195,26 +219,43 @@ class PostController extends Controller
     public function actionEditPost ($p)
     {
         
-        if (Yii::$app->user->isGuest) {
-            return $this->goHome();
+        // Security (checks if the user is admin or post author)
+        if (!Yii::$app->user->can('updatePost') &&
+        !Yii::$app->user->can('updateOwnPost',
+            ['user_id' => TblPost::getAuthorId($p)]))
+        {
+            $this->goHome();
         }
         
         // Obtain the post to edit
-        
         $post = TblPost::getPostById($p);
+        
+        // Load its tags
+        $post->tags = TblTag::getTags($post->post_id);
+        
+        // This is for header image update
         $image = new TblImage();
 
         // Update the post
         
         if ($post->load(Yii::$app->request->post()) && $post->validate())
         {
+            // Organize tags (update post tags and create them if new)
+            TblTag::organizeTags(
+                $post->post_id,
+                $post->tags,
+                TblTag::turnArray(Yii::$app->request->post()["TblPost"]["tags"])
+            );
             
+            // Retrieve uploaded image
             $image->imageFile = UploadedFile::getInstance($image, 'imageFile');
-                    
+            
+            // If image exists, save post and image
             if (isset($image->imageFile)) {
                 
                 TblPost::savePost($post, $image);
                 
+            // If image doesn't exist, only save post
             } else {
                 $post->save();
             }
@@ -249,10 +290,16 @@ class PostController extends Controller
      */
     public function actionDeletePost ($p)
     {
-        if (Yii::$app->user->isGuest) {
-            return $this->goHome();
+        
+        // Security (checks if the user is admin or post author)
+        if (!Yii::$app->user->can('deletePost') &&
+        !Yii::$app->user->can('deleteOwnPost',
+            ['user_id' => TblPost::getAuthorId($p)]))
+        {
+            $this->goHome();
         }
         
+        // Obtain post to delete
         $post = TblPost::findOne($p);
         
         if (isset($post)) {
@@ -312,9 +359,6 @@ class PostController extends Controller
      */
     public function actionDeleteComment ($c)
     {
-        if (Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
         
         $comment = TblComment::findOne($c);
         

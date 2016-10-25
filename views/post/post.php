@@ -85,7 +85,6 @@ use yii\widgets\ListView;
         border-radius: 5px;
     }
     
-    
 </style>
 
 <div>
@@ -136,16 +135,16 @@ use yii\widgets\ListView;
                 Tagged in:
                 <?php foreach($post->tags as $tag): ?>
                     <div class="tag btn-primary">
-                        <?=Html::encode($tag->tagname)?>
+                        <?=Html::encode($tag)?>
                     </div>
                 <?php endforeach; ?>
             </p>
+            <br>
         <?php else: ?>
             <p>
-                No tags found.
+                This post is not yet tagged.
             </p>
         <?php endif; ?>
-            <br>
     </div>
     
     <!-- Gallery section -->
