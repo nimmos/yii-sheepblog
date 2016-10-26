@@ -156,6 +156,37 @@ class TblTag extends ActiveRecord
     }
     
     /**
+     * Obtain an array of post_id which are assigned
+     * the tags specified in "tagstring".
+     * 
+     * @param type $tagstring
+     * @return type
+     */
+    public static function getPostsByTags ($tagstring)
+    {
+        $return = (new Query())
+            ->select(['a.post_id'])
+            ->from(['tbl_tags t', 'tbl_tag_assign a'])
+            ->where(['t.tagname' => $tagstring])
+            ->andWhere('a.tag_id=t.tag_id')
+            ->all();
+        
+        if(!empty($return)) {
+            
+            foreach($return as $post) {
+                $posts[] = array_values($post)[0];
+            }
+            return $posts;
+        } else {
+            return array();
+        }
+    }
+    
+    ////////////////////////////////////////////////
+    // Logic for organizing tags
+    ////////////////////////////////////////////////
+    
+    /**
      * Organize the tags comparing old and new ones,
      * creating or deleting assignments and the own tags.
      * 
@@ -240,7 +271,7 @@ class TblTag extends ActiveRecord
     public static function turnArray ($tagstring)
     {
         if(strlen($tagstring)!=0) {
-            return explode(",", $tagstring);
+            return array_filter(explode(",", $tagstring));
         } else {
             return array();
         }

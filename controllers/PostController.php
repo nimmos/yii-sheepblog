@@ -84,25 +84,47 @@ class PostController extends Controller
      * 
      * @return type
      */
-    public function actionIndex()
+    public function actionIndex($tagstring=null)
     {
+        
+        // Establish query for retrieving posts
+        
+        if(!isset($tagstring)||empty($tagstring))
+        {
+            $tagstring = array();
+            
+            // If tagstring not specified, retrieve all posts
+            $query = TblPost::find()->orderBy('time DESC');
+            
+        } else {
+            
+            $tagstring = TblTag::turnArray($tagstring);
+            
+            // Retrieve posts with selected tags
+            $query = TblPost::find()
+                    ->where([
+                        'post_id' => TblTag::getPostsByTags($tagstring)
+                    ])->orderBy('time DESC');
+        }
         
         // Retrieve all posts in ActiveDataProvider
         // sorted from recent posts to older posts
         $posts = new ActiveDataProvider([
-            'query' => TblPost::find()->orderBy('time DESC'),
+            'query' => $query,
             'pagination' => [ 'pageSize' => 3 ],
         ]);
         
         // Retrieve all tags in ActiveDataProvider
         // sorted alphabetically
-        $tags = new ActiveDataProvider([
+        $tags = (new ActiveDataProvider([
             'query' => TblTag::find()->orderBy('tagname ASC'),
-        ]);
+            'pagination' => false,
+        ]))->getModels();
         
         return $this->render('index', [
             'posts' => $posts,
-            'tags' => $tags->getModels(),
+            'tags' => $tags,
+            'tagstring' => $tagstring,
         ]);
     }
     
