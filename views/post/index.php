@@ -46,9 +46,16 @@ use yii\widgets\ListView;
         color: white;
     }
     
-    #tag-buttons {
-        margin-left: 5px;
-        margin-bottom: 10px;
+    #clean-tags {
+        float: left;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin: 5px 5px;
+        border-radius: 5px;
+/*        margin-left: 5px;
+        margin-bottom: 10px;*/
     }
     
     .tag.inactive {
@@ -133,8 +140,8 @@ use yii\widgets\ListView;
                     'hideOnSinglePage' => true,
                     'maxButtonCount' => 5,
                 ],
-                'layout' => '{items}{pager}',
-                'summary' => 'Showing {begin}-{end} from {totalCount} posts<br/>',
+                'layout' => '{summary}{items}{pager}',
+                'summary' => 'Found {totalCount} post(s)<br/>',
             ]) ?>
             
         </div>
@@ -144,24 +151,17 @@ use yii\widgets\ListView;
         <div id="tags" class="body-content col-lg-3">
             <h3>Tags</h3>
             
-            <div id="tag-buttons">
-                <?= Html::a("Search", ['post/index'], [
-                    'id' => 'search-tags',
-                    'class' => 'btn btn-info',
-                ]) ?>
-                <button id="clean-tags" class="btn btn-profile">Clean</button>
-            </div>
-            
-            <form id="send"></form>
-            
             <?php if(!empty($tags)): ?>
             <div class="tag-list">
-            <?php foreach($tags as $tag): ?>
+                
+                <button id="clean-tags" class="btn btn-profile">Clean tag selection</button>
+                
+                <?php foreach($tags as $tag): ?>
                 <button type="button" class="tag btn <?= (in_array($tag->tagname, $tagstring))?
                             "active" : "inactive" ?>">
                     <?=Html::encode($tag->tagname)?>
                 </button>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
             </div>
             
             <?php else: ?>
@@ -169,6 +169,11 @@ use yii\widgets\ListView;
                     No tags found.
                 </p>
             <?php endif; ?>
+                
+            <?= Html::a("Search", ['post/index'], [
+                'id' => 'search-tags',
+                'style' => 'visibility: hidden',
+            ]) ?>
         </div>
         
         <?php \yii\widgets\Pjax::end(); ?>
@@ -179,10 +184,38 @@ use yii\widgets\ListView;
 
 <script>
     
-    function taglistBehaviour () {
+    /**
+     * Updates link with active tags string
+     * 
+     * @param {type} tagsearch_link
+     * @returns {undefined}
+     */
+    function updateLinkWithTags (tagsearch_link) {
+        
+        // Obtain the string with active tags
         
         var tagstring = "";
+        $(".tag.active").each(function(index){
+            var str = $(this).html();
+            tagstring += $.trim(str) + ",";
+        });
+        
+        // Change link of "search" button
+
+        $("#search-tags").attr("href",
+            tagsearch_link + "&tagstring=" + tagstring);    
+        tagstring = "";
+    }
+    
+    /**
+     * All the tag list behaviour
+     * 
+     * @returns {undefined}
+     */
+    function taglistBehaviour () {
+        
         var tagsearch_link = $("#search-tags").attr("href");
+        //updateLinkWithTags(tagsearch_link);
 
         // Toggle active-inactive state for tag buttons
 
@@ -196,19 +229,8 @@ use yii\widgets\ListView;
 
         $(".tag-list").click(function(){
 
-            // Obtain the string with te active tags
-
-            $(".tag.active").each(function(index){
-                var str = $(this).html();
-                tagstring += $.trim(str) + ",";
-            });
-
-            // Change link of "search" button
-
-            $("#search-tags").attr("href",
-                tagsearch_link + "&tagstring=" + tagstring);    
-            tagstring = "";
-
+            updateLinkWithTags(tagsearch_link);
+            $("#search-tags").trigger("click");
         });
 
         // Clean tags from being activated
@@ -216,7 +238,18 @@ use yii\widgets\ListView;
         $("#clean-tags").click(function(){
 
             $(".tag").removeClass("active").addClass("inactive");
+            updateLinkWithTags(tagsearch_link);
+            $("#search-tags").trigger("click");
         });
+        
+    }
+    
+    /**
+     * Do some CSS adjustments
+     * 
+     * @returns {undefined}
+     */
+    function cssInit () {
         
         // Remove unnecessary borders from post list
         
@@ -224,13 +257,18 @@ use yii\widgets\ListView;
         $(".list-group-item:last").css("border-bottom", "0");
     }
     
+    // Page first load
+    
     $(document).ready(function(){
         
         taglistBehaviour();
+        cssInit();
+        
+        // Re-apply jQuery before and after pjax
         
         $("#index-pjax")
-                .on('pjax:start', function(){ taglistBehaviour(); })
-                .on('pjax:end', function(){ taglistBehaviour(); });
+                .on('pjax:start', function(){ taglistBehaviour(); cssInit(); })
+                .on('pjax:end', function(){ taglistBehaviour(); cssInit(); });
         
     });
 </script>

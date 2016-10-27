@@ -1,6 +1,8 @@
 <?php
-use yii\helpers\Html;
+
 use app\models\TblImage;
+use app\models\TblTag;
+use yii\helpers\Html;
 
     // Content unformatting
 
@@ -27,6 +29,9 @@ use app\models\TblImage;
     } else {
         $thumbpath = TblImage::TEMP_THUMB;
     }
+    
+    // Load tag string
+    $tagstring = TblTag::turnString(TblTag::getTags($post->post_id),", ");
 ?>
 
 <!-- View for each post resume -->
@@ -71,8 +76,14 @@ use app\models\TblImage;
             ?>
         </h3>
         <p style="color:#ababab;">
-            <strong>Posted by: </strong><?= $author ?>
+            <strong>Posted by: </strong><?=$author?>
         </p>
-        <p><?= $content ?><br></p>
+        <p>
+            <?=$content?><br>
+        </p>
+        <p style="color:#ababab;">
+            Posted on: 
+            <span style="color:#0d88c1;"><?=Html::encode($tagstring)?></span>
+        </p>
     </div>
 </div>

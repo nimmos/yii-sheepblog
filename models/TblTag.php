@@ -253,10 +253,10 @@ class TblTag extends ActiveRecord
      * @param type $tags
      * @return string
      */
-    public static function turnString ($tags)
+    public static function turnString ($tags, $separator=",")
     {
         if(isset($tags)) {
-            return implode(",", $tags);
+            return implode($separator, $tags);
         } else {
             return "";
         }
