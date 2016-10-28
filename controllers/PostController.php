@@ -124,8 +124,22 @@ class PostController extends Controller
         return $this->render('index', [
             'posts' => $posts,
             'tags' => $tags,
-            'tagstring' => $tagstring,
+            'tagstring' => TblTag::turnString($tagstring),
         ]);
+    }
+    
+    /**
+     * 
+     */
+    public function actionSearch()
+    {
+        if(Yii::$app->request->isPost) {
+            $searchstring = Yii::$app->request->post()["searchstring"];
+            echo "search this: (" . $searchstring . ")";
+        } else {
+            $this->goHome();
+        }
+        
     }
     
     /**

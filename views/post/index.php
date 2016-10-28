@@ -1,9 +1,10 @@
 <?php
 
-use app\models\TblUser;
 use app\models\TblImage;
+use app\models\TblUser;
 use yii\helpers\Html;
 use yii\widgets\ListView;
+use yii\widgets\Pjax;
 
     $this->title = 'Sheepblog';
     // Set return URL
@@ -13,12 +14,16 @@ use yii\widgets\ListView;
 
 <style>
     
+    /* Jumbotron */
+    
     #index-jumbo {
         background: url(<?=TblImage::TEMP_ORIG?>) no-repeat;
         background-size: cover;
         color: white;
         text-align: right;
     }
+    
+    /* Feedback messages */
     
     #delete-message {
         background-color: rgba(217, 83, 79, 0.60);
@@ -31,42 +36,21 @@ use yii\widgets\ListView;
         font-size: medium;
     }
     
-    .tag {
-        float: left;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin: 5px 5px;
-        border-radius: 5px;
-        color: white;
+    /* Searchbox */
+    
+    .inner-addon { 
+        position: relative; 
+    }
+
+    .inner-addon .glyphicon {
+        position: absolute;
+        left: 0px;
+        padding: 10px;
+        pointer-events: none; 
     }
     
-    .tag.btn:hover, .btn:focus, .btn.focus {
-        color: white;
-    }
-    
-    #clean-tags {
-        float: left;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin: 5px 5px;
-        border-radius: 5px;
-/*        margin-left: 5px;
-        margin-bottom: 10px;*/
-    }
-    
-    .tag.inactive {
-        background-color: #337ab7;
-        border-color: #337ab7;
-    }
-    
-    .tag.active {
-        color: #4f4428;
-        background-color: #f5bc1b;
-        border-color: #f5bc1b;
+    .inner-addon input {
+        padding-left: 30px;
     }
     
 </style>
@@ -105,7 +89,7 @@ use yii\widgets\ListView;
         
         <!-- Show recent entries -->
         
-        <?php \yii\widgets\Pjax::begin([
+        <?php Pjax::begin([
             'id' => 'index-pjax',
             'timeout' => 30000,
         ]); ?>
@@ -144,67 +128,60 @@ use yii\widgets\ListView;
                 'summary' => 'Found {totalCount} post(s)<br/>',
             ]) ?>
             
+            <?= Html::a("", ['post/index'], [
+                'id' => 'post-filter',
+                'style' => 'height: 0px; visibility: visible;',
+            ]) ?>
+            
+        <?php Pjax::end(); ?>
+            
         </div>
         
         <!-- Tags section -->
         
         <div id="tags" class="body-content col-lg-3">
-            <h3>Tags</h3>
             
-            <?php if(!empty($tags)): ?>
-            <div class="tag-list">
-                
-                <button id="clean-tags" class="btn btn-profile">Clean tag selection</button>
-                
-                <?php foreach($tags as $tag): ?>
-                <button type="button" class="tag btn <?= (in_array($tag->tagname, $tagstring))?
-                            "active" : "inactive" ?>">
-                    <?=Html::encode($tag->tagname)?>
-                </button>
-                <?php endforeach; ?>
+            <h3>Search</h3>
+            
+            <div class="inner-addon">
+                <span class="glyphicon glyphicon-search"></span>
+                <input type="text" id="searchbox" class="form-control" />
             </div>
             
-            <?php else: ?>
-                <p>
-                    No tags found.
-                </p>
-            <?php endif; ?>
-                
-            <?= Html::a("Search", ['post/index'], [
-                'id' => 'search-tags',
-                'style' => 'visibility: hidden',
-            ]) ?>
         </div>
         
-        <?php \yii\widgets\Pjax::end(); ?>
-        
     </div>
+    
     <p id="test"></p>
+    
 </div>
 
 <script>
     
     /**
-     * Updates link with active tags string
+     * Perform a POST to actionSearch(), sending whatever
+     * string is in the searchbox text input.
      * 
-     * @param {type} tagsearch_link
      * @returns {undefined}
      */
-    function updateLinkWithTags (tagsearch_link) {
+    function search () {
         
-        // Obtain the string with active tags
-        
-        var tagstring = "";
-        $(".tag.active").each(function(index){
-            var str = $(this).html();
-            tagstring += $.trim(str) + ",";
-        });
-        
-        // Change link of "search" button
+        // If the searchbox is focused and contains something
+        if($("#searchbox").is(":focus") && $("#searchbox").val()) {
 
-        $("#search-tags").attr("href",
-            tagsearch_link + "&tagstring=" + tagstring);    
-        tagstring = "";
+            searchstring = $("#searchbox").val();
+            
+            $.post(
+                "<?=Yii::$app->urlManager->createUrl(["post/search"])?>",
+                { "searchstring" : searchstring },
+                function(data,status) {
+                    $("#test").html(data);
+                    
+                    // This will trigger the post list filtering
+                    //$("#post-filter").trigger("click");
+                }
+            );
+        }
     }
     
     /**
@@ -212,36 +189,29 @@ use yii\widgets\ListView;
      * 
      * @returns {undefined}
      */
-    function taglistBehaviour () {
+    function generalBehaviour () {
         
-        var tagsearch_link = $("#search-tags").attr("href");
-        //updateLinkWithTags(tagsearch_link);
-
-        // Toggle active-inactive state for tag buttons
-
-        $(".tag").click(function(){
-            $(this).toggleClass("active");
-            $(this).toggleClass("inactive");
-        });
-
-        // Toggle visibility of tag buttons
-        // depending on whether there is active tags or not
-
-        $(".tag-list").click(function(){
-
-            updateLinkWithTags(tagsearch_link);
-            $("#search-tags").trigger("click");
-        });
-
-        // Clean tags from being activated
-
-        $("#clean-tags").click(function(){
-
-            $(".tag").removeClass("active").addClass("inactive");
-            updateLinkWithTags(tagsearch_link);
-            $("#search-tags").trigger("click");
+        // Store anchor link for post filtering
+        var search_link = $("#post-filter").attr("href");
+        
+        // Search when ENTER key is pressed
+        
+        $("#searchbox").on('keypress', function (event) {
+            if(event.which === 13){
+                search();
+            }
         });
         
+        $('#searchbox').on('input', function() {
+            if($("#searchbox").val()==="") {
+                $("#post-filter").attr("href", search_link + "&tagstring=");
+                $("#post-filter").trigger("click");
+            }
+        });
+        
+        // Set interval for automatic search() every 2 seconds
+        
+        setInterval( function(){ search(); }, 2000 );
     }
     
     /**
@@ -257,18 +227,22 @@ use yii\widgets\ListView;
         $(".list-group-item:last").css("border-bottom", "0");
     }
     
+    ////////////////////////////////////////////////
     // Page first load
+    ////////////////////////////////////////////////
     
     $(document).ready(function(){
         
-        taglistBehaviour();
+        // Initial jQuery configuration
+        
+        generalBehaviour();
         cssInit();
         
         // Re-apply jQuery before and after pjax
         
         $("#index-pjax")
-                .on('pjax:start', function(){ taglistBehaviour(); cssInit(); })
-                .on('pjax:end', function(){ taglistBehaviour(); cssInit(); });
+            .on('pjax:start', function(){ generalBehaviour(); cssInit(); })
+            .on('pjax:end', function(){ generalBehaviour(); cssInit(); });
         
     });
 </script>

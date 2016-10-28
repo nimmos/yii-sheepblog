@@ -37,12 +37,12 @@ use yii\bootstrap\Html;
     
     .tag {
         float: left;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin: 5px 5px;
-        border-radius: 5px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-right: 8px;
+        padding-left: 8px;
+        margin: 3px;
+        background-color: #337ab7;
     }
     
 </style>
@@ -141,11 +141,16 @@ use yii\bootstrap\Html;
         
         // CSS of tags input
         
-        //$('.bootstrap-tagsinput').css("clear","left");
+        $('.bootstrap-tagsinput').css({
+            "padding" : "3px",
+            "min-width" : "100%"
+        });
+        
         $('.bootstrap-tagsinput > input').css({
+            "float" : "left",
             "font-size" : "medium",
-            "margin-top" : "10px",
-            "margin-bottom" : "10px"
+            "margin-top" : "8px",
+            "margin-bottom" : "8px"
         });
     });
     

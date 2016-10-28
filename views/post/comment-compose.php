@@ -19,10 +19,13 @@ use yii\bootstrap\Html;
 
 <!-- Comment composing form -->
 
-<hr>
-
 <div class = "row">
-   <div class = "col-lg-12">
+    <div class = "col-lg-12">
+        
+        <div>
+            <h4><hr><strong>Say something</strong></h4>
+        </div>
+        
         <?php $form = ActiveForm::begin(['id' => 'comment-compose-form']); ?>
 
             <!-- Comment editing (using TinyMCE extension) -->
@@ -46,7 +49,7 @@ use yii\bootstrap\Html;
                     'external_plugins' => ['filemanager' => '/extensions/filemanager/plugin.min.js'],
                     'filemanager_title' => 'Responsive Filemanager',
                 ]
-            ]);?>
+            ])->label(false);?>
 
             <div class = "form-group">
                 <?= Html::submitButton('Comment', [
@@ -54,6 +57,6 @@ use yii\bootstrap\Html;
                     'name' => 'publish-button']) ?>
             </div>
         <?php ActiveForm::end(); ?>
-   </div>
+    </div>
 </div>
 

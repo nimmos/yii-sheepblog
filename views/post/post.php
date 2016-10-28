@@ -77,12 +77,13 @@ use yii\widgets\ListView;
     }
     .tag {
         float: left;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin: 5px 5px;
-        border-radius: 5px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-right: 8px;
+        padding-left: 8px;
+        margin: 3px;
+        background-color: #337ab7;
+        border-radius: 3px;
     }
     
 </style>
@@ -131,8 +132,11 @@ use yii\widgets\ListView;
     <div class="tag-section">
 
         <?php if(!empty($post->tags)): ?>
+        
+            <div>
+                <h4><hr><strong>Tagged in:</strong></h4>
+            </div>
             <p>
-                Tagged in:
                 <?php foreach($post->tags as $tag): ?>
                     <div class="tag btn-primary">
                         <?=Html::encode($tag)?>
@@ -178,7 +182,7 @@ use yii\widgets\ListView;
     <!-- Comment section-->
     
     <div>
-        <h3><hr>Here's what other users said...</h3>
+        <h4><hr><strong>Here's what other users said...</strong></h4>
     </div>
     
     <?= ListView::widget([

@@ -50,7 +50,7 @@
 <?php if(count($images)!=0): ?>
 
 <div>
-    <h3><hr>Gallery</h3>
+    <h4><hr><strong>Gallery</strong></h4>
 </div>
 
 <section class="center-mode slider">
