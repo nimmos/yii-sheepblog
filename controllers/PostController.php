@@ -68,6 +68,7 @@ class PostController extends Controller
                 case 'index':
                 case 'set-cookie':
                 case 'post':
+			          case 'search':
                     return true;
                 default:
                     // If user is guest, lead it back to home
@@ -139,17 +140,16 @@ class PostController extends Controller
             $searchstring = TblTag::cleanStringToArray(
                 Yii::$app->request->post()["searchstring"]
             );
-
-            $result = searchTags($searchstring);
+            
+            $result = TblTag::searchTags($searchstring);
             $tags = array();
 
             // Store in an array
             foreach($result as $tag) {
                 $tags[] = $tag["tagname"];
             }
-
+            
             echo TblTag::turnString($tags);
-            die(); // Is this really necessary?
         }
     }
 
@@ -239,12 +239,17 @@ class PostController extends Controller
             // If there's an image, save it
 
             if (isset($image->imageFile)) {
-
-                TblPost::savePost($post, $image);
-
+                $post = TblPost::savePost($post, $image);
             } else {
                 $post->save();
             }
+
+            // Organize tags (update post tags and create them if new)
+    				TblTag::organizeTags(
+        				$post->post_id,
+        				array(),
+        				TblTag::turnArray(Yii::$app->request->post()["TblPost"]["tags"])
+      			);
 
             return $this->redirect(['post/post', 'p' => $post->post_id]);
         }

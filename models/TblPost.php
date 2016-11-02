@@ -22,7 +22,7 @@ use yii\db\Query;
 class TblPost extends ActiveRecord
 {
     public $tags;
-    
+
     /**
      * @inheritdoc
      */
@@ -84,10 +84,10 @@ class TblPost extends ActiveRecord
     {
         return $this->hasOne(TblUser::className(), ['user_id' => 'user_id']);
     }
-    
+
     /**
      * Gets a post from the database by looking for its id.
-     * 
+     *
      * @param type $post_id
      * @return type
      */
@@ -95,10 +95,10 @@ class TblPost extends ActiveRecord
     {
         return TblPost::findOne($post_id);
     }
-    
+
     /**
      * Gets the post's author id
-     * 
+     *
      * @param type $post_id
      * @return type
      */
@@ -106,10 +106,10 @@ class TblPost extends ActiveRecord
     {
         return TblPost::findOne($post_id)->user_id;
     }
-    
+
     /**
      * Saves a post and its header image in the database
-     * 
+     *
      * @param type $post
      * @param type $image
      */
@@ -123,5 +123,7 @@ class TblPost extends ActiveRecord
 
         // Save image in db
         $image->saveHeaderImage($post);
+
+	      return $post;
     }
 }

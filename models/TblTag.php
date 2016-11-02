@@ -31,6 +31,7 @@ class TblTag extends ActiveRecord
     {
         return [
             [['tagname'], 'required'],
+            [['tagname'], 'unique'],
             [['tagname'], 'string', 'max' => 30],
         ];
     }
@@ -53,14 +54,14 @@ class TblTag extends ActiveRecord
     {
         return $this->hasMany(TagAssign::className(), ['tag_id' => 'tag_id']);
     }
-    
+
     ////////////////////////////////////////////////
     // Queries for tbl_tag_assign
     ////////////////////////////////////////////////
-    
+
     /**
      * Returns all the tags of a given post_id.
-     * 
+     *
      * @param type $post_id
      * @return type
      */
@@ -72,22 +73,22 @@ class TblTag extends ActiveRecord
                 ->where('t.tag_id=a.tag_id')
                 ->andWhere(['a.post_id' => $post_id])
                 ->all();
-        
+
         // Store in an array
         foreach($result as $tag) {
             $tags[] = $tag->tagname;
         }
-        
+
         if(isset($tags)) {
             return $tags;
         } else {
             return array();
         }
     }
-    
+
     /**
      * Create a tag and assign it to the post.
-     * 
+     *
      * @param type $post_id
      * @param type $tagname
      */
@@ -99,10 +100,10 @@ class TblTag extends ActiveRecord
 
         self::assign($post_id, $newtag->tag_id);
     }
-    
+
     /**
      * Assign a tag to the post.
-     * 
+     *
      * @param type $post_id
      * @param type $tag_id
      */
@@ -115,10 +116,10 @@ class TblTag extends ActiveRecord
             'post_id' => $post_id
         ])->execute();
     }
-    
+
     /**
      * Delete an assignment of a tag to a post.
-     * 
+     *
      * @param type $tag_id
      */
     public static function deleteAssign ($tag_id)
@@ -128,11 +129,11 @@ class TblTag extends ActiveRecord
         ->delete('tbl_tag_assign', ['tag_id' => $tag_id])
         ->execute();
     }
-    
+
     /**
      * Check if a tag is already assigned.
      * If post not specified, it just queries its existence in tbl_tag_assign.
-     * 
+     *
      * @param type $tag_id
      * @param type $post_id
      * @return type
@@ -154,30 +155,30 @@ class TblTag extends ActiveRecord
                 ->exists();
         }
     }
-    
+
     /**
      * Obtain an array of post_id which are assigned
      * the tags specified in "tagstring".
-     * 
+     *
      * @param type $tagstring
      * @return type
      */
     public static function getPostsByTags ($tagstring)
     {
-        
+
         foreach($tagstring as $tag) {
             $where[] = ['like', 'tagname', $tag];
         }
-        
+
         $return = (new Query())
             ->select(['a.post_id'])
             ->from(['tbl_tags t', 'tbl_tag_assign a'])
             ->where(array_merge(['or'], $where))
             ->andWhere('a.tag_id=t.tag_id')
             ->all();
-        
+
         if(!empty($return)) {
-            
+
             foreach($return as $post) {
                 $posts[] = array_values($post)[0];
             }
@@ -186,10 +187,10 @@ class TblTag extends ActiveRecord
             return array();
         }
     }
-    
+
     /**
      * Obtain an array of tags matching "searchstring"
-     * 
+     *
      * @param type $searchstring
      * @return type
      */
@@ -222,45 +223,45 @@ class TblTag extends ActiveRecord
                 ->all();
         }
     }
-    
+
     ////////////////////////////////////////////////
     // Logic for organizing tags
     ////////////////////////////////////////////////
-    
+
     /**
      * Organize the tags comparing old and new ones,
      * creating or deleting assignments and the own tags.
-     * 
+     *
      * @param type $post_id
      * @param type $oldtags
      * @param type $newtags
      */
-    public static function organizeTags ($post_id, $oldtags, $newtags)
+    public static function organizeTags ($post_id, $oldtags=array(), $newtags)
     {
-        
+
         // NEW AND EXISTING TAGS
-        
+
         if(!empty($newtags))
         {
             foreach($newtags as $tag) {
-                
+
                 // Check if each tag already exists
                 $foundtag = TblTag::findOne(["tagname" => trim($tag)]);
-                
+
                 // If not, create the new tag and assign to this post
                 if (!isset($foundtag)) {
-                    
+
                     self::createAndAssign($post_id, trim($tag));
-                    
+
                 // If tag already exists, check if it's already assigned
                 // If not, then assign to the post
                 } else if (!self::isAssigned($foundtag->tag_id, $post_id)) {
-                    
+
                     self::assign($post_id, $foundtag->tag_id);
                 }
             }
         }
-        
+
         // REMOVED TAGS
 
         foreach ($oldtags as $tagname) {
@@ -282,15 +283,15 @@ class TblTag extends ActiveRecord
             }
         }
     }
-    
+
     ////////////////////////////////////////////////
     // Auxiliar
     ////////////////////////////////////////////////
-    
+
     /**
      * Converts a tag array to a string
      * with tags separated by commas (,)
-     * 
+     *
      * @param type $array
      * @return string
      */
@@ -302,10 +303,10 @@ class TblTag extends ActiveRecord
             return "";
         }
     }
-    
+
     /**
      * Converts an string to array
-     * 
+     *
      * @param type $string
      * @return type
      */
@@ -317,18 +318,18 @@ class TblTag extends ActiveRecord
             return array();
         }
     }
-    
+
     /**
      * Cleans a string with spaces and
      * returns an array with unique and non-empty items.
-     * 
+     *
      * @param type $string
      * @return string
      */
     public static function cleanStringToArray ($string)
     {
         if(strlen($string)!=0) {
-            
+
             $array = explode(",", $string);
             $string = implode(" ", $array);
             $array = explode(" ", $string);
