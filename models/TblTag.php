@@ -164,10 +164,15 @@ class TblTag extends ActiveRecord
      */
     public static function getPostsByTags ($tagstring)
     {
+        
+        foreach($tagstring as $tag) {
+            $where[] = ['like', 'tagname', $tag];
+        }
+        
         $return = (new Query())
             ->select(['a.post_id'])
             ->from(['tbl_tags t', 'tbl_tag_assign a'])
-            ->where(['t.tagname' => $tagstring])
+            ->where(array_merge(['or'], $where))
             ->andWhere('a.tag_id=t.tag_id')
             ->all();
         
@@ -179,6 +184,42 @@ class TblTag extends ActiveRecord
             return $posts;
         } else {
             return array();
+        }
+    }
+    
+    /**
+     * Obtain an array of tags matching "searchstring"
+     * 
+     * @param type $searchstring
+     * @return type
+     */
+    public static function searchTags ($searchstring)
+    {
+        if(empty($searchstring))
+        {
+            // Perform query for all tags
+            return (new Query())
+                ->select(['tagname'])
+                ->from(['tbl_tags'])
+                ->orderBy('usage DESC')
+                ->limit(30)
+                ->all();
+        } else {
+
+            // Building WHERE clause
+
+            foreach($searchstring as $string) {
+                $where[] = ['like', 'tagname', $string];
+            }
+
+            // Perform query
+            return (new Query())
+                ->select(['tagname'])
+                ->from(['tbl_tags'])
+                ->where(array_merge(['or'], $where))
+                ->orderBy('usage DESC')
+                ->limit(30)
+                ->all();
         }
     }
     
@@ -250,13 +291,13 @@ class TblTag extends ActiveRecord
      * Converts a tag array to a string
      * with tags separated by commas (,)
      * 
-     * @param type $tags
+     * @param type $array
      * @return string
      */
-    public static function turnString ($tags, $separator=",")
+    public static function turnString ($array, $separator=",")
     {
-        if(isset($tags)) {
-            return implode($separator, $tags);
+        if(isset($array)) {
+            return implode($separator, $array);
         } else {
             return "";
         }
@@ -265,13 +306,35 @@ class TblTag extends ActiveRecord
     /**
      * Converts an string to array
      * 
-     * @param type $tagstring
+     * @param type $string
      * @return type
      */
-    public static function turnArray ($tagstring)
+    public static function turnArray ($string)
     {
-        if(strlen($tagstring)!=0) {
-            return array_filter(explode(",", $tagstring));
+        if(strlen($string)!=0) {
+            return array_filter(explode(",", $string));
+        } else {
+            return array();
+        }
+    }
+    
+    /**
+     * Cleans a string with spaces and
+     * returns an array with unique and non-empty items.
+     * 
+     * @param type $string
+     * @return string
+     */
+    public static function cleanStringToArray ($string)
+    {
+        if(strlen($string)!=0) {
+            
+            $array = explode(",", $string);
+            $string = implode(" ", $array);
+            $array = explode(" ", $string);
+            $array = array_filter($array);
+            $array = array_unique($array);
+            return $array;
         } else {
             return array();
         }

@@ -36,11 +36,10 @@ use yii\widgets\Breadcrumbs;
             <p>
                 This web uses cookies. If you agree with this website's cookies
                 policy, click on the next button:
-                <?= Html::a('Accept',
-                    ['/post/set-cookie'],
+                <?= Html::button('Accept',
                     [
+                        'id' => 'cookie-accept',
                         'class' => 'btn btn-info btn-sm',
-                        'data-dismiss' => 'alert',
                     ])
                 ?>
             </p>
@@ -58,3 +57,14 @@ use yii\widgets\Breadcrumbs;
 <!-- Content -->
 
 <?= $content ?>
+
+<script>
+    $("#cookie-accept").click(function(event){
+        $.post(
+            "<?=Yii::$app->urlManager->createUrl(["post/set-cookie"])?>",
+            function() {
+                $("#message").hide();
+            }
+        );
+    });
+</script>

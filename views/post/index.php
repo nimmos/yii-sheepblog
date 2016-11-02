@@ -53,6 +53,10 @@ use yii\widgets\Pjax;
         padding-left: 30px;
     }
     
+    .dropdown-menu {
+        width: 100%;
+    }
+    
 </style>
 
 <div class="site-index">
@@ -91,7 +95,7 @@ use yii\widgets\Pjax;
         
         <?php Pjax::begin([
             'id' => 'index-pjax',
-            'timeout' => 30000,
+            'timeout' => 60000,
         ]); ?>
         
         <div id="recent-posts" class="body-content col-lg-9">
@@ -128,9 +132,9 @@ use yii\widgets\Pjax;
                 'summary' => 'Found {totalCount} post(s)<br/>',
             ]) ?>
             
-            <?= Html::a("", ['post/index'], [
+            <?= Html::a('', ['post/index'], [
                 'id' => 'post-filter',
-                'style' => 'height: 0px; visibility: visible;',
+                'style' => 'height: 0px; visibility: hidden;',
             ]) ?>
             
         <?php Pjax::end(); ?>
@@ -143,20 +147,39 @@ use yii\widgets\Pjax;
             
             <h3>Search</h3>
             
-            <div class="inner-addon">
+            <div class="searchbox-container inner-addon">
                 <span class="glyphicon glyphicon-search"></span>
-                <input type="text" id="searchbox" class="form-control" />
+                <input type="text" id="searchbox" class="form-control"/>
+                <ul class="dropdown-menu">
+                </ul>
             </div>
             
         </div>
         
     </div>
     
-    <p id="test"></p>
-    
 </div>
 
 <script>
+    
+    // Global variable for storing searchbox string
+    var search_string = "";
+    var tag_retrieve = "";
+    
+    /**
+     * Filter the posts
+     * 
+     * @returns {undefined}
+     */
+    function filterPosts () {
+        
+        search_string = $("#searchbox").val();
+        
+        $("#post-filter").attr("href",
+            "<?=Yii::$app->urlManager->createUrl(["post/index"])?>"
+            + "&s=" + search_string);
+        $("#post-filter").trigger("click");
+    }
     
     /**
      * Perform a POST to actionSearch(), sending whatever
@@ -164,55 +187,100 @@ use yii\widgets\Pjax;
      * 
      * @returns {undefined}
      */
-    function search () {
+    function searchTags () {
         
-        // If the searchbox is focused and contains something
-        if($("#searchbox").is(":focus") && $("#searchbox").val()) {
+        // If the searchbox is focused
+        if($("#searchbox").is(":focus")) {
 
-            searchstring = $("#searchbox").val();
+            if($("#searchbox").val()) {
+                search_string = $("#searchbox").val();
+            } else {
+                search_string = "";
+            }
             
             $.post(
                 "<?=Yii::$app->urlManager->createUrl(["post/search"])?>",
-                { "searchstring" : searchstring },
-                function(data,status) {
-                    $("#test").html(data);
-                    
-                    // This will trigger the post list filtering
-                    //$("#post-filter").trigger("click");
+                { searchstring : search_string },
+                function(data) {
+                    tag_retrieve = data;
+                    showTags();
                 }
             );
         }
     }
     
     /**
-     * All the tag list behaviour
+     * Adds a tag to the dropdown list 
+     *
+     * @param {type} item
+     * @returns {undefined}
+     */
+    function addTagToDropdown (item) {
+        $(".dropdown-menu").append(
+                $("<li>").append($("<a>").text(item))
+        );
+    }
+    
+    /**
+     * Adds all the tags to the dropdown list
+     * in a recursive way
+     *
+     * @returns {undefined}
+     */
+    function addTags () {
+        
+        $(".dropdown-menu").empty();
+        
+        if(tag_retrieve) {
+            var tag_array = tag_retrieve.split(",");
+            tag_array.forEach(addTagToDropdown);
+            tag_retrieve = "";
+        }
+    }
+    
+    /**
+     * Show the tags with slideUp-Down animations
      * 
      * @returns {undefined}
      */
-    function generalBehaviour () {
+    function showTags () {
         
-        // Store anchor link for post filtering
-        var search_link = $("#post-filter").attr("href");
+        addTags();
         
-        // Search when ENTER key is pressed
-        
-        $("#searchbox").on('keypress', function (event) {
-            if(event.which === 13){
-                search();
-            }
-        });
-        
-        $('#searchbox').on('input', function() {
-            if($("#searchbox").val()==="") {
-                $("#post-filter").attr("href", search_link + "&tagstring=");
-                $("#post-filter").trigger("click");
-            }
-        });
-        
-        // Set interval for automatic search() every 2 seconds
-        
-        setInterval( function(){ search(); }, 2000 );
+        if($(".dropdown-menu").children().length > 0) {
+            $(".dropdown-menu").slideDown(500);
+        } else {
+            $(".dropdown-menu").slideUp(500);
+        }
     }
+    
+    // Search when ENTER key is pressed
+        
+    $("#searchbox").keypress(function (event) {
+        if(event.which === 13){
+            filterPosts();
+        }
+    });
+    
+    // Show tag suggestions when there's something in the box
+    
+    $("#searchbox").on("input", function(){
+        
+        searchTags();
+    });
+    
+    $("#searchbox").focus(function(){
+        searchTags(); 
+    });
+    $("#searchbox").focusout(function(){
+        $(".dropdown-menu").slideUp(500);
+    });
+    
+    // TODO: Dropdown tag suggestion logic
+    
+//    $("li > a").click(function(){
+//        $("#searchbox").html($(this).html());
+//    });
     
     /**
      * Do some CSS adjustments
@@ -235,14 +303,17 @@ use yii\widgets\Pjax;
         
         // Initial jQuery configuration
         
-        generalBehaviour();
         cssInit();
+        
+        // Set interval for automatic searchTags() every 2 seconds
+        
+        //setInterval( function(){ searchTags(); }, 2000 );
         
         // Re-apply jQuery before and after pjax
         
         $("#index-pjax")
-            .on('pjax:start', function(){ generalBehaviour(); cssInit(); })
-            .on('pjax:end', function(){ generalBehaviour(); cssInit(); });
+            .on('pjax:start', function(){ cssInit(); })
+            .on('pjax:end', function(){ cssInit(); });
         
     });
 </script>

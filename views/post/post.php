@@ -131,11 +131,12 @@ use yii\widgets\ListView;
     
     <div class="tag-section">
 
-        <?php if(!empty($post->tags)): ?>
+        <div>
+            <h4><hr><strong>Tagged in:</strong></h4>
+        </div>
         
-            <div>
-                <h4><hr><strong>Tagged in:</strong></h4>
-            </div>
+        <?php if(!empty($post->tags)): ?>
+            
             <p>
                 <?php foreach($post->tags as $tag): ?>
                     <div class="tag btn-primary">

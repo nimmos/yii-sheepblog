@@ -11,6 +11,7 @@ use DateInterval;
 use DateTime;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use yii\helpers\BaseFileHelper;
 use yii\web\Controller;
 use yii\web\Cookie;
@@ -84,26 +85,26 @@ class PostController extends Controller
      * 
      * @return type
      */
-    public function actionIndex($tagstring=null)
+    public function actionIndex($s=null)
     {
         
         // Establish query for retrieving posts
         
-        if(!isset($tagstring)||empty($tagstring))
+        if(!isset($s)||empty($s))
         {
-            $tagstring = array();
+            $s = array();
             
             // If tagstring not specified, retrieve all posts
             $query = TblPost::find()->orderBy('time DESC');
             
         } else {
             
-            $tagstring = TblTag::turnArray($tagstring);
+            $s = TblTag::cleanStringToArray($s);
             
             // Retrieve posts with selected tags
             $query = TblPost::find()
                     ->where([
-                        'post_id' => TblTag::getPostsByTags($tagstring)
+                        'post_id' => TblTag::getPostsByTags($s)
                     ])->orderBy('time DESC');
         }
         
@@ -124,22 +125,32 @@ class PostController extends Controller
         return $this->render('index', [
             'posts' => $posts,
             'tags' => $tags,
-            'tagstring' => TblTag::turnString($tagstring),
         ]);
     }
     
     /**
-     * 
+     * Performs a tag search and echoes back to
+     * the view that called this action
      */
     public function actionSearch()
     {
         if(Yii::$app->request->isPost) {
-            $searchstring = Yii::$app->request->post()["searchstring"];
-            echo "search this: (" . $searchstring . ")";
-        } else {
-            $this->goHome();
+            
+            $searchstring = TblTag::cleanStringToArray(
+                Yii::$app->request->post()["searchstring"]
+            );
+            
+            $result = searchTags($searchstring);
+            $tags = array();
+            
+            // Store in an array
+            foreach($result as $tag) {
+                $tags[] = $tag["tagname"];
+            }
+            
+            echo TblTag::turnString($tags);
+            die(); // Is this really necessary?
         }
-        
     }
     
     /**
@@ -159,7 +170,6 @@ class PostController extends Controller
             'expire' => (new DateTime())->add(new DateInterval('P2Y'))->getTimestamp(),
         ]));
         
-        return $this->goBack();
     }
 
     /**
