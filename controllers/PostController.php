@@ -232,7 +232,9 @@ class PostController extends Controller
 
         if ($post->load(Yii::$app->request->post()) && $post->validate())
         {
-            $post->user_id = Yii::$app->user->id;
+         	$post->user_id = Yii::$app->user->id;
+
+				// Organize tags (update post tags and create them if new)
 
             // Retrieves the uploaded image
 
@@ -242,11 +244,16 @@ class PostController extends Controller
 
             if (isset($image->imageFile)) {
 
-                TblPost::savePost($post, $image);
-
+                $post = TblPost::savePost($post, $image);
             } else {
                 $post->save();
             }
+
+				TblTag::organizeTags(
+				$post->post_id,
+				array(),
+				TblTag::turnArray(Yii::$app->request->post()["TblPost"]["tags"])
+			);
 
             return $this->redirect(['post/post', 'p' => $post->post_id]);
         }
